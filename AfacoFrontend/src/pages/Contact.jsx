@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Section from '../components/Section'
 import Button  from '../components/Button'
+import { useData } from '../store/DataContext'
 import { getContactInfo, submitContactForm } from '../data/contact'
 import './Contact.css'
 
@@ -17,15 +18,16 @@ function validate(fields) {
 }
 
 export default function Contact() {
+  const { contact: liveContact } = useData()
   const [info,    setInfo]    = useState(null)
   const [fields,  setFields]  = useState(INITIAL)
   const [errors,  setErrors]  = useState({})
-  const [status,  setStatus]  = useState('idle') // idle | submitting | success | error
+  const [status,  setStatus]  = useState('idle')
   const [touched, setTouched] = useState({})
 
   useEffect(() => {
-    getContactInfo().then(setInfo)
-  }, [])
+    getContactInfo(liveContact).then(setInfo)
+  }, [liveContact])
 
   const handleChange = (e) => {
     const { name, value } = e.target

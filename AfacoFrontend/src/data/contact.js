@@ -1,40 +1,26 @@
 /**
- * Mock data – Contact Information
- * Replace getContactInfo() body with a real fetch() call later.
+ * Mock data helpers – Contact Information
+ *
+ * Helpers now operate on the live object passed in from DataContext.
+ * TODO (each function): replace body with fetch('/api/contact/…')
  */
-
-const CONTACT_INFO = {
-  address: '12 Avenue Agricole, Butembo, North Kivu, Democratic Republic of Congo',
-  phone: '+243 997 123 456',
-  email: 'info@afaco.org',
-  officeHours: 'Monday – Friday, 08:00 – 17:00 (CAT)',
-  socialLinks: {
-    facebook: 'https://facebook.com/afaco',
-    twitter: 'https://twitter.com/afaco',
-    instagram: 'https://instagram.com/afaco',
-    linkedin: 'https://linkedin.com/company/afaco',
-    youtube: 'https://youtube.com/@afaco',
-  },
-  mapEmbedUrl:
-    'https://www.openstreetmap.org/export/embed.html?bbox=29.27%2C0.13%2C29.30%2C0.16&layer=mapnik',
-}
 
 /**
+ * @param {Object} liveContact  – the contact object from DataContext
  * @returns {Promise<Object>}
  */
-export async function getContactInfo() {
-  // TODO: replace with → return fetch('/api/contact').then(r => r.json())
-  return Promise.resolve(CONTACT_INFO)
+export async function getContactInfo(liveContact) {
+  // TODO: return fetch('/api/contact').then(r => r.json())
+  return Promise.resolve(liveContact)
 }
 
 /**
  * Submit a contact form message.
- * @param {{ name: string, email: string, message: string }} formData
- * @returns {Promise<{ success: boolean }>}
+ * This function is NOT driven by DataContext (it's an outbound action).
+ * TODO: replace with real fetch POST
  */
 export async function submitContactForm(formData) {
-  // TODO: replace with →
-  // return fetch('/api/contact/submit', {
+  // TODO: return fetch('/api/contact/submit', {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
   //   body: JSON.stringify(formData),

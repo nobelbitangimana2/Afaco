@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
+import { useData } from '../store/DataContext'
 import { getUpdateById, getUpdates } from '../data/updates'
 import './UpdateDetail.css'
 
 export default function UpdateDetail() {
   const { id }           = useParams()
   const navigate         = useNavigate()
+  const { updates: liveUpdates } = useData()
   const [update, setUpdate]   = useState(null)
   const [related, setRelated] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setLoading(true)
-    getUpdateById(id).then((data) => {
+    getUpdateById(id, liveUpdates).then((data) => {
       if (!data) { navigate('/news', { replace: true }); return }
       setUpdate(data)
       setLoading(false)
     })
-    getUpdates().then((all) =>
+    getUpdates(liveUpdates).then((all) =>
       setRelated(all.filter((u) => u.id !== id).slice(0, 3))
     )
-  }, [id, navigate])
+  }, [id, navigate, liveUpdates])
 
   if (loading) return <div className="ud__loading container">Loading…</div>
   if (!update)  return null

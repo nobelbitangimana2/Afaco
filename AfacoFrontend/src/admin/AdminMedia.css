@@ -1,0 +1,162 @@
+.adm-media__file-input { display: none; }
+
+/* Filter tabs */
+.adm-media__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.75rem;
+}
+
+.adm-media__filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--white);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.adm-media__filter-btn:hover { border-color: var(--green); color: var(--green); }
+.adm-media__filter-btn--active {
+  background: var(--green); color: var(--white); border-color: var(--green);
+}
+
+.adm-media__filter-count {
+  background: rgba(255,255,255,0.25);
+  border-radius: 10px;
+  padding: 0 0.4rem;
+  font-size: 0.7rem;
+}
+.adm-media__filter-btn:not(.adm-media__filter-btn--active) .adm-media__filter-count {
+  background: #f0f0f0;
+  color: var(--muted);
+}
+
+/* Group */
+.adm-media__group { margin-bottom: 2.5rem; }
+
+.adm-media__group-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.adm-media__group-count {
+  background: var(--green-light);
+  color: var(--green-dark);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 10px;
+}
+
+/* Grid */
+.adm-media__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 600px)  { .adm-media__grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 900px)  { .adm-media__grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1100px) { .adm-media__grid { grid-template-columns: repeat(5, 1fr); } }
+
+/* Card */
+.adm-media__card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: grab;
+  transition: box-shadow 0.2s;
+}
+.adm-media__card:active { cursor: grabbing; }
+.adm-media__card:hover  { box-shadow: var(--shadow); }
+
+/* Image */
+.adm-media__img-wrap {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.adm-media__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Overlay with reorder buttons */
+.adm-media__img-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0.4rem;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+}
+.adm-media__card:hover .adm-media__img-overlay {
+  opacity: 1;
+  background: rgba(0,0,0,0.3);
+}
+
+.adm-media__reorder-btns {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.adm-media__reorder-btn {
+  background: rgba(255,255,255,0.85);
+  border: none;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.adm-media__reorder-btn:hover:not(:disabled) { background: var(--white); }
+.adm-media__reorder-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* Controls below image */
+.adm-media__controls {
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.adm-media__alt-input  { font-size: 0.78rem; padding: 0.35rem 0.5rem; }
+.adm-media__cat-select { font-size: 0.78rem; padding: 0.35rem 0.5rem; }
+.adm-media__delete-btn { align-self: flex-end; }
+
+/* Empty state */
+.adm-media__empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  background: var(--white);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}

@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import Section    from '../components/Section'
 import UpdateCard from '../components/UpdateCard'
+import { useData } from '../store/DataContext'
 import { getUpdates } from '../data/updates'
 import './News.css'
 
 const CATEGORIES = ['All', 'agriculture', 'training', 'partnerships', 'community', 'infrastructure']
 
 export default function News() {
+  const { updates: liveUpdates } = useData()
   const [updates, setUpdates] = useState([])
   const [filter,  setFilter]  = useState('All')
 
   useEffect(() => {
-    getUpdates().then(setUpdates)
-  }, [])
+    getUpdates(liveUpdates).then(setUpdates)
+  }, [liveUpdates])
 
   const displayed =
     filter === 'All' ? updates : updates.filter((u) => u.category === filter)

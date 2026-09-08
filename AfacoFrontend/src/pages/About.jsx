@@ -3,6 +3,7 @@ import Section from '../components/Section'
 import Card    from '../components/Card'
 import Button  from '../components/Button'
 import { getTeamMembers } from '../data/team'
+import { useData } from '../store/DataContext'
 import './About.css'
 
 const TIMELINE = [
@@ -16,6 +17,7 @@ const TIMELINE = [
 ]
 
 export default function About() {
+  const { content } = useData()
   const [team, setTeam] = useState([])
 
   useEffect(() => {
@@ -42,26 +44,12 @@ export default function About() {
           <div className="about__mv-block">
             <div className="about__mv-icon" aria-hidden="true">🎯</div>
             <h3>Our Mission</h3>
-            <p>
-              To empower smallholder farmers across Central Africa with the knowledge,
-              tools, infrastructure, and market connections they need to build sustainable
-              livelihoods, strengthen local food systems, and contribute to long-term
-              regional food security. We do this through hands-on training, cooperative
-              development, climate-smart agricultural practice, and strategic partnerships
-              with governments, NGOs, and the private sector.
-            </p>
+            <p>{content.mission}</p>
           </div>
           <div className="about__mv-block">
             <div className="about__mv-icon" aria-hidden="true">🌍</div>
             <h3>Our Vision</h3>
-            <p>
-              A Central Africa where every farming community — regardless of geography,
-              gender, or economic status — has equitable access to quality inputs,
-              modern techniques, fair markets, and the social infrastructure needed to
-              thrive. We envision a region free from seasonal hunger, where agriculture
-              is a dignified and prosperous livelihood, and where farmers are respected
-              contributors to national economies.
-            </p>
+            <p>{content.vision}</p>
           </div>
         </div>
       </Section>

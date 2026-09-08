@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import Section   from '../components/Section'
 import ImageGrid from '../components/ImageGrid'
+import { useData } from '../store/DataContext'
 import { getImages, getImageCategories } from '../data/images'
 import './Gallery.css'
 
 export default function Gallery() {
+  const { images: liveImages } = useData()
   const [images,     setImages]     = useState([])
   const [categories, setCategories] = useState([])
   const [active,     setActive]     = useState('All')
 
   useEffect(() => {
-    getImages().then(setImages)
-    getImageCategories().then((cats) => setCategories(['All', ...cats]))
-  }, [])
+    getImages(liveImages).then(setImages)
+    getImageCategories(liveImages).then((cats) => setCategories(['All', ...cats]))
+  }, [liveImages])
 
   const displayed = active === 'All' ? images : images.filter((i) => i.category === active)
 
