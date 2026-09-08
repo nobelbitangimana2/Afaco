@@ -17,7 +17,25 @@ const PORT = process.env.PORT || 5000
 
 // ── Middleware ─────────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin) return callback(null, true)
+
+    const allowed = [
+      process.env.CLIENT_ORIGIN,
+      'http://localhost:5173',
+      'http://localhost:4173',
+    ].filter(Boolean)
+
+    // Also allow any vercel.app subdomain (covers preview deployments)
+    const isVercel = /\.vercel\.app$/.test(origin)
+
+    if (isVercel || allowed.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error(`CORS: origin ${origin} not allowed`))
+    }
+  },
   credentials: true,
 }))
 app.use(express.json())
