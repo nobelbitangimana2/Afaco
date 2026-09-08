@@ -188,3 +188,17 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.ud__spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: ud-spin 0.7s linear infinite;
+  margin: 0 auto 0.75rem;
+}
+
+@keyframes ud-spin {
+  to { transform: rotate(360deg); }
+}

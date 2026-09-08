@@ -36,9 +36,15 @@ export default function AdminContent() {
     const errs = validate()
     if (Object.keys(errs).length) { setErrors(errs); return }
     saveContent({ mission, vision })
-    setDirty(false)
-    setToast({ type: 'success', msg: 'Mission & Vision saved. Changes are live on the public site.' })
-    setTimeout(() => setToast(null), 3500)
+      .then(() => {
+        setDirty(false)
+        setToast({ type: 'success', msg: 'Mission & Vision saved. Changes are live on the public site.' })
+        setTimeout(() => setToast(null), 3500)
+      })
+      .catch((err) => {
+        setToast({ type: 'error', msg: err.message || 'Save failed.' })
+        setTimeout(() => setToast(null), 3500)
+      })
   }
 
   function handleReset() {
@@ -58,8 +64,7 @@ export default function AdminContent() {
 
       <div className="adm-page__header">
         <div>
-          <h1 className="adm-page__title">Site Content</h1>
-          <p className="adm-page__subtitle">
+          <h1 className="adm-page__title">Site Content</h1>          <p className="adm-page__subtitle">
             Mission and Vision text shown on the Home and About pages.
           </p>
         </div>

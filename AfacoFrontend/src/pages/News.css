@@ -33,3 +33,10 @@
   color: var(--muted);
   padding: 3rem 0;
 }
+
+.news__loading {
+  text-align: center;
+  color: var(--muted);
+  padding: 3rem 0;
+  font-size: 0.9rem;
+}

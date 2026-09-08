@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { useData } from '../store/DataContext'
 import './AdminMedia.css'
 
-const ALL_CATEGORIES = ['farmland', 'farmers', 'activities', 'harvest', 'infrastructure', 'community']
+const ALL_CATEGORIES = ['farmland', 'farmers', 'activities', 'harvest', 'infrastructure', 'community', 'general']
 
 function ConfirmDialog({ message, onConfirm, onCancel }) {
   return (
@@ -11,7 +11,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
         <h3>Confirm delete</h3>
         <p>{message}</p>
         <div className="adm-confirm-actions">
-          <button className="adm-btn adm-btn--ghost" onClick={onCancel}>Cancel</button>
+          <button className="adm-btn adm-btn--ghost"  onClick={onCancel}>Cancel</button>
           <button className="adm-btn adm-btn--danger" onClick={onConfirm}>Delete</button>
         </div>
       </div>
@@ -22,118 +22,114 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
 export default function AdminMedia() {
   const { images, addImage, deleteImage, updateImage, reorderImages } = useData()
 
-  const [filterCat,   setFilterCat]   = useState('All')
-  const [toast,       setToast]       = useState(null)   // { type, msg }
-  const [confirmId,   setConfirmId]   = useState(null)
-  const fileInputRef                  = useRef(null)
+  const [filterCat,  setFilterCat]  = useState('All')
+  const [toast,      setToast]      = useState(null)
+  const [confirmId,  setConfirmId]  = useState(null)
+  const [uploading,  setUploading]  = useState(false)
+  const fileInputRef                = useRef(null)
+  const dragSrc                     = useRef(null)
 
-  // ── Derived list ────────────────────────────────────────────────────────────
-  const displayed = filterCat === 'All'
-    ? images
-    : images.filter((i) => i.category === filterCat)
+  const catImages    = (cat) => images.filter((i) => i.category === cat)
+  const usedCats     = [...new Set(images.map((i) => i.category))]
+  const groupsToShow = filterCat === 'All' ? usedCats : [filterCat]
 
-  // Per-category lists for reorder (need absolute index in full array)
-  const catImages = (cat) => images.filter((i) => i.category === cat)
-
-  // ── Toast helper ────────────────────────────────────────────────────────────
   function showToast(type, msg) {
     setToast({ type, msg })
-    setTimeout(() => setToast(null), 3000)
+    setTimeout(() => setToast(null), 3500)
   }
 
-  // ── Upload (mock) ────────────────────────────────────────────────────────────
-  // NOTE: Real upload would POST multipart/form-data to /api/media.
-  //       Server-side compression and resizing would happen there.
-  //       Here we create a local object URL as a placeholder preview.
-  function handleFileChange(e) {
+  // ── Upload — real multipart POST via DataContext.addImage ─────────────────
+  async function handleFileChange(e) {
     const files = Array.from(e.target.files)
     if (!files.length) return
-
-    files.forEach((file) => {
-      const objectUrl = URL.createObjectURL(file)
-      const newImage = {
-        id:       `local-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        url:      objectUrl,
-        alt:      file.name.replace(/\.[^.]+$/, ''),
-        category: 'farmland', // default; admin can change after upload
+    setUploading(true)
+    let ok = 0, fail = 0
+    for (const file of files) {
+      try {
+        await addImage(file, 'general', file.name.replace(/\.[^.]+$/, ''))
+        ok++
+      } catch (err) {
+        console.error(err)
+        fail++
       }
-      addImage(newImage)
-    })
-
-    showToast('success', `${files.length} image${files.length > 1 ? 's' : ''} added (mock — no server upload yet).`)
-    // Reset input so the same file can be re-selected
+    }
+    setUploading(false)
     e.target.value = ''
+    if (fail === 0) {
+      showToast('success', `${ok} image${ok !== 1 ? 's' : ''} uploaded and compressed.`)
+    } else {
+      showToast('error', `${ok} uploaded, ${fail} failed.`)
+    }
   }
 
-  // ── Delete ───────────────────────────────────────────────────────────────────
-  function handleDelete(id) { setConfirmId(id) }
-  function confirmDelete() {
-    deleteImage(confirmId)
-    setConfirmId(null)
-    showToast('success', 'Image deleted.')
+  // ── Delete ────────────────────────────────────────────────────────────────
+  async function confirmDelete() {
+    try {
+      await deleteImage(confirmId)
+      showToast('success', 'Image deleted.')
+    } catch (err) {
+      showToast('error', err.message)
+    } finally {
+      setConfirmId(null)
+    }
   }
 
-  // ── Category change ──────────────────────────────────────────────────────────
-  function handleCategoryChange(id, cat) {
-    updateImage(id, { category: cat })
-    showToast('success', 'Category updated.')
+  // ── Category / alt update ──────────────────────────────────────────────────
+  async function handleCategoryChange(id, category) {
+    try {
+      await updateImage(id, { category })
+      showToast('success', 'Category updated.')
+    } catch (err) {
+      showToast('error', err.message)
+    }
   }
 
-  // ── Alt text change ──────────────────────────────────────────────────────────
   function handleAltChange(id, alt) {
-    updateImage(id, { alt })
+    // Optimistic local update only; blur triggers save
+    updateImage(id, { alt }).catch((err) => showToast('error', err.message))
   }
 
-  // ── Reorder (up/down within category) ───────────────────────────────────────
+  // ── Reorder ────────────────────────────────────────────────────────────────
   function handleMove(cat, idx, dir) {
     const list   = catImages(cat)
     const newIdx = idx + dir
     if (newIdx < 0 || newIdx >= list.length) return
-    reorderImages(cat, idx, newIdx)
+    reorderImages(cat, idx, newIdx).catch((err) => showToast('error', err.message))
   }
-
-  // ── Drag-and-drop reorder ────────────────────────────────────────────────────
-  const dragSrc = useRef(null)
 
   function onDragStart(e, cat, idx) {
     dragSrc.current = { cat, idx }
     e.dataTransfer.effectAllowed = 'move'
   }
-
-  function onDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move' }
-
+  function onDragOver(e)        { e.preventDefault(); e.dataTransfer.dropEffect = 'move' }
   function onDrop(e, cat, idx) {
     e.preventDefault()
-    if (!dragSrc.current || dragSrc.current.cat !== cat) return
-    if (dragSrc.current.idx === idx) return
-    reorderImages(cat, dragSrc.current.idx, idx)
+    if (!dragSrc.current || dragSrc.current.cat !== cat || dragSrc.current.idx === idx) return
+    reorderImages(cat, dragSrc.current.idx, idx).catch((err) => showToast('error', err.message))
     dragSrc.current = null
   }
 
-  // ── Grouped view ─────────────────────────────────────────────────────────────
-  const usedCategories = [...new Set(images.map((i) => i.category))]
-  const groupsToShow   = filterCat === 'All' ? usedCategories : [filterCat]
-
   return (
     <div className="adm-media">
-      {/* Toast */}
       {toast && (
         <div className={`adm-toast adm-toast--${toast.type}`} role="status">
           {toast.type === 'success' ? '✓' : '✗'} {toast.msg}
         </div>
       )}
 
-      {/* Header */}
       <div className="adm-page__header">
         <div>
           <h1 className="adm-page__title">Media Manager</h1>
-          <p className="adm-page__subtitle">{images.length} images · drag rows to reorder within a category</p>
+          <p className="adm-page__subtitle">
+            {images.length} images · images are compressed to WebP on upload
+          </p>
         </div>
         <button
           className="adm-btn adm-btn--primary"
           onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
         >
-          + Upload images
+          {uploading ? 'Uploading…' : '+ Upload images'}
         </button>
         <input
           ref={fileInputRef}
@@ -148,7 +144,7 @@ export default function AdminMedia() {
 
       {/* Filter tabs */}
       <div className="adm-media__filters" role="group" aria-label="Filter by category">
-        {['All', ...usedCategories].map((cat) => (
+        {['All', ...usedCats].map((cat) => (
           <button
             key={cat}
             className={`adm-media__filter-btn${filterCat === cat ? ' adm-media__filter-btn--active' : ''}`}
@@ -163,7 +159,7 @@ export default function AdminMedia() {
         ))}
       </div>
 
-      {/* Grouped image grids */}
+      {/* Grouped grids */}
       {groupsToShow.map((cat) => {
         const list = catImages(cat)
         if (!list.length) return null
@@ -173,7 +169,6 @@ export default function AdminMedia() {
               {cat.charAt(0).toUpperCase() + cat.slice(1)}
               <span className="adm-media__group-count">{list.length}</span>
             </h2>
-
             <div className="adm-media__grid">
               {list.map((img, idx) => (
                 <div
@@ -185,41 +180,26 @@ export default function AdminMedia() {
                   onDrop={(e) => onDrop(e, cat, idx)}
                   title="Drag to reorder"
                 >
-                  {/* Preview */}
                   <div className="adm-media__img-wrap">
                     <img
-                      src={img.url}
+                      src={img.thumbnailUrl || img.url}
                       alt={img.alt}
                       className="adm-media__img"
                       loading="lazy"
                     />
                     <div className="adm-media__img-overlay">
                       <div className="adm-media__reorder-btns">
-                        <button
-                          className="adm-media__reorder-btn"
-                          onClick={() => handleMove(cat, idx, -1)}
-                          disabled={idx === 0}
-                          aria-label="Move left"
-                          title="Move left"
-                        >←</button>
-                        <button
-                          className="adm-media__reorder-btn"
-                          onClick={() => handleMove(cat, idx, 1)}
-                          disabled={idx === list.length - 1}
-                          aria-label="Move right"
-                          title="Move right"
-                        >→</button>
+                        <button className="adm-media__reorder-btn" onClick={() => handleMove(cat, idx, -1)} disabled={idx === 0} aria-label="Move left">←</button>
+                        <button className="adm-media__reorder-btn" onClick={() => handleMove(cat, idx, 1)} disabled={idx === list.length - 1} aria-label="Move right">→</button>
                       </div>
                     </div>
                   </div>
-
-                  {/* Controls */}
                   <div className="adm-media__controls">
                     <input
                       type="text"
                       className="adm-input adm-media__alt-input"
-                      value={img.alt}
-                      onChange={(e) => handleAltChange(img.id, e.target.value)}
+                      defaultValue={img.alt}
+                      onBlur={(e) => handleAltChange(img.id, e.target.value)}
                       placeholder="Alt text"
                       aria-label="Image alt text"
                     />
@@ -229,14 +209,12 @@ export default function AdminMedia() {
                       onChange={(e) => handleCategoryChange(img.id, e.target.value)}
                       aria-label="Image category"
                     >
-                      {ALL_CATEGORIES.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
+                      {ALL_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
                     <button
                       className="adm-btn adm-btn--danger adm-btn--sm adm-media__delete-btn"
-                      onClick={() => handleDelete(img.id)}
-                      aria-label={`Delete image: ${img.alt}`}
+                      onClick={() => setConfirmId(img.id)}
+                      aria-label={`Delete: ${img.alt}`}
                     >
                       Delete
                     </button>
@@ -248,16 +226,15 @@ export default function AdminMedia() {
         )
       })}
 
-      {images.length === 0 && (
+      {images.length === 0 && !uploading && (
         <div className="adm-media__empty">
           <p>No images yet. Click <strong>Upload images</strong> to add some.</p>
         </div>
       )}
 
-      {/* Confirm delete dialog */}
       {confirmId && (
         <ConfirmDialog
-          message="This image will be removed from the media library and will no longer appear on the public site."
+          message="This image will be deleted from the server and removed from the public gallery."
           onConfirm={confirmDelete}
           onCancel={() => setConfirmId(null)}
         />

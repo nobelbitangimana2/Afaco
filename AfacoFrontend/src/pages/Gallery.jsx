@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import Section   from '../components/Section'
 import ImageGrid from '../components/ImageGrid'
 import { useData } from '../store/DataContext'
-import { getImages, getImageCategories } from '../data/images'
 import './Gallery.css'
 
 export default function Gallery() {
-  const { images: liveImages } = useData()
-  const [images,     setImages]     = useState([])
-  const [categories, setCategories] = useState([])
-  const [active,     setActive]     = useState('All')
+  const { images } = useData()
+  const [active, setActive] = useState('All')
 
-  useEffect(() => {
-    getImages(liveImages).then(setImages)
-    getImageCategories(liveImages).then((cats) => setCategories(['All', ...cats]))
-  }, [liveImages])
+  const categories = useMemo(
+    () => ['All', ...[...new Set(images.map((i) => i.category))]],
+    [images]
+  )
 
   const displayed = active === 'All' ? images : images.filter((i) => i.category === active)
 
   return (
     <div className="gallery-page">
-      {/* Hero */}
       <div className="page-hero page-hero--green">
         <div className="container page-hero__inner">
           <span className="page-hero__label">Photo Gallery</span>
@@ -33,7 +29,6 @@ export default function Gallery() {
       </div>
 
       <Section id="gallery">
-        {/* Category tabs */}
         <div className="gallery__tabs" role="tablist" aria-label="Filter photos by category">
           {categories.map((cat) => (
             <button
@@ -48,15 +43,18 @@ export default function Gallery() {
           ))}
         </div>
 
-        {/* Count */}
         <p className="gallery__count" aria-live="polite">
           {displayed.length} {displayed.length === 1 ? 'photo' : 'photos'}
           {active !== 'All' ? ` · ${active}` : ''}
         </p>
 
-        <ImageGrid images={displayed} columns={4} />
+        {images.length === 0 ? (
+          <p className="gallery__loading">Loading gallery…</p>
+        ) : (
+          <ImageGrid images={displayed} columns={4} />
+        )}
 
-        {displayed.length === 0 && (
+        {images.length > 0 && displayed.length === 0 && (
           <p className="gallery__empty">No photos in this category yet.</p>
         )}
       </Section>

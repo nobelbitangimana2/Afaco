@@ -71,9 +71,15 @@ export default function AdminContactInfo() {
         youtube:   form.youtube,
       },
     })
-    setDirty(false)
-    setToast({ type: 'success', msg: 'Contact info saved. Changes are live on the public site.' })
-    setTimeout(() => setToast(null), 3500)
+      .then(() => {
+        setDirty(false)
+        setToast({ type: 'success', msg: 'Contact info saved. Changes are live on the public site.' })
+        setTimeout(() => setToast(null), 3500)
+      })
+      .catch((err) => {
+        setToast({ type: 'error', msg: err.message || 'Save failed.' })
+        setTimeout(() => setToast(null), 3500)
+      })
   }
 
   function handleReset() {

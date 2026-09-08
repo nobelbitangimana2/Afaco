@@ -39,3 +39,10 @@
   color: var(--muted);
   padding: 3rem 0;
 }
+
+.gallery__loading {
+  text-align: center;
+  color: var(--muted);
+  padding: 3rem 0;
+  font-size: 0.9rem;
+}

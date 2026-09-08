@@ -1,32 +1,65 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
+import api from '../services/api'
 import { useData } from '../store/DataContext'
-import { getUpdateById, getUpdates } from '../data/updates'
 import './UpdateDetail.css'
 
 export default function UpdateDetail() {
-  const { id }           = useParams()
-  const navigate         = useNavigate()
-  const { updates: liveUpdates } = useData()
-  const [update, setUpdate]   = useState(null)
+  const { id }     = useParams()
+  const navigate   = useNavigate()
+  const { updates } = useData()
+
+  const [update,  setUpdate]  = useState(null)
   const [related, setRelated] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error,   setError]   = useState('')
 
   useEffect(() => {
-    setLoading(true)
-    getUpdateById(id, liveUpdates).then((data) => {
-      if (!data) { navigate('/news', { replace: true }); return }
-      setUpdate(data)
-      setLoading(false)
-    })
-    getUpdates(liveUpdates).then((all) =>
-      setRelated(all.filter((u) => u.id !== id).slice(0, 3))
+    if (updates.length === 0) return // still loading from API
+    const found = updates.find((u) => u.id === id)
+    if (!found) {
+      // Not in context yet — direct fetch for direct URL access
+      api.get(`/api/updates/${id}`)
+          .then((res) => {
+            setUpdate(res.data)
+            setRelated(
+              updates.filter((u) => u.id !== id).slice(0, 3)
+            )
+            setLoading(false)
+          })
+          .catch(() => {
+            navigate('/news', { replace: true })
+          })
+      return
+    }
+    setUpdate(found)
+    setRelated(
+      [...updates]
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .filter((u) => u.id !== id)
+        .slice(0, 3)
     )
-  }, [id, navigate, liveUpdates])
+    setLoading(false)
+  }, [id, updates, navigate])
 
-  if (loading) return <div className="ud__loading container">Loading…</div>
-  if (!update)  return null
+  if (loading) {
+    return (
+      <div className="ud__loading container" aria-live="polite">
+        <div className="ud__spinner" aria-hidden="true" />
+        Loading article…
+      </div>
+    )
+  }
+  if (error) {
+    return (
+      <div className="ud__loading container">
+        <p>{error}</p>
+        <Button to="/news" variant="outline" className="mt-2">← Back to News</Button>
+      </div>
+    )
+  }
+  if (!update) return null
 
   const formatted = new Date(update.date).toLocaleDateString('en-GB', {
     day: 'numeric', month: 'long', year: 'numeric',
@@ -34,42 +67,32 @@ export default function UpdateDetail() {
 
   return (
     <div className="ud">
-      {/* Hero image */}
       <div className="ud__hero">
         <img src={update.imageUrl} alt={update.title} className="ud__hero-img" />
         <div className="ud__hero-overlay" aria-hidden="true" />
         <div className="ud__hero-content container">
-          {update.category && (
-            <span className="ud__category">{update.category}</span>
-          )}
+          {update.category && <span className="ud__category">{update.category}</span>}
           <h1 className="ud__title">{update.title}</h1>
           <time className="ud__date" dateTime={update.date}>{formatted}</time>
         </div>
       </div>
 
-      {/* Article body */}
       <div className="container ud__body-wrap">
         <div className="ud__body">
-          {/* Back link */}
           <nav aria-label="Breadcrumb" className="ud__breadcrumb">
             <Link to="/news">← Back to News</Link>
           </nav>
-
-          {/* Body text */}
           <div className="ud__text">
             {update.body.split('\n\n').map((para, i) => (
               <p key={i}>{para}</p>
             ))}
           </div>
-
-          {/* Share / back */}
           <div className="ud__actions">
             <Button to="/news" variant="outline">← All News</Button>
             <Button to="/contact">Get Involved</Button>
           </div>
         </div>
 
-        {/* Related updates sidebar */}
         {related.length > 0 && (
           <aside className="ud__related" aria-label="Related updates">
             <h2 className="ud__related-heading">More Updates</h2>

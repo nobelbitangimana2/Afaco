@@ -183,3 +183,16 @@
   background: rgba(255,255,255,0.1) !important;
   border-color: var(--white) !important;
 }
+
+/* Loading / placeholder states */
+.home__loading {
+  text-align: center;
+  color: var(--muted);
+  padding: 2rem 0;
+  font-size: 0.9rem;
+}
+
+.home__placeholder {
+  color: var(--muted);
+  font-style: italic;
+}

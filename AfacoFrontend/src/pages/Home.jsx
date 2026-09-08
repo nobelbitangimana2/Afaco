@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react'
 import Slideshow  from '../components/Slideshow'
 import Section    from '../components/Section'
 import UpdateCard from '../components/UpdateCard'
 import ImageGrid  from '../components/ImageGrid'
 import Button     from '../components/Button'
 import { useData } from '../store/DataContext'
-import { getUpdates } from '../data/updates'
-import { getImages  } from '../data/images'
 import './Home.css'
 
 const HERO_SLIDES = [
@@ -25,17 +22,13 @@ const STATS = [
 ]
 
 export default function Home() {
-  const { updates: liveUpdates, images: liveImages, content } = useData()
-  const [updates, setUpdates] = useState([])
-  const [images,  setImages]  = useState([])
+  const { updates, images, content } = useData()
 
-  useEffect(() => {
-    getUpdates(liveUpdates).then((data) => setUpdates(data.slice(0, 3)))
-  }, [liveUpdates])
+  const latestUpdates = [...updates]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 3)
 
-  useEffect(() => {
-    getImages(liveImages).then((data) => setImages(data.slice(0, 8)))
-  }, [liveImages])
+  const galleryImages = images.slice(0, 8)
 
   return (
     <div className="home">
@@ -67,12 +60,12 @@ export default function Home() {
           <div className="home__mv-card">
             <div className="home__mv-icon" aria-hidden="true">🎯</div>
             <h3 className="home__mv-heading">Mission</h3>
-            <p>{content.mission}</p>
+            <p>{content.mission || <span className="home__placeholder">Loading…</span>}</p>
           </div>
           <div className="home__mv-card">
             <div className="home__mv-icon" aria-hidden="true">🌍</div>
             <h3 className="home__mv-heading">Vision</h3>
-            <p>{content.vision}</p>
+            <p>{content.vision || <span className="home__placeholder">Loading…</span>}</p>
           </div>
         </div>
       </Section>
@@ -92,9 +85,13 @@ export default function Home() {
       {/* ── Latest Updates ── */}
       <Section label="What's happening" title="Latest Updates"
         subtitle="Stay informed about AFACO's work and impact across the region." id="updates">
-        <div className="grid-3">
-          {updates.map((u) => <UpdateCard key={u.id} {...u} />)}
-        </div>
+        {latestUpdates.length === 0 ? (
+          <p className="home__loading">Loading updates…</p>
+        ) : (
+          <div className="grid-3">
+            {latestUpdates.map((u) => <UpdateCard key={u.id} {...u} />)}
+          </div>
+        )}
         <div className="home__see-all">
           <Button to="/news" variant="outline">View All News</Button>
         </div>
@@ -103,7 +100,11 @@ export default function Home() {
       {/* ── Gallery Preview ── */}
       <Section label="In the field" title="Gallery"
         subtitle="A glimpse of our work and the communities we serve." tinted id="gallery-preview">
-        <ImageGrid images={images} columns={4} />
+        {galleryImages.length === 0 ? (
+          <p className="home__loading">Loading gallery…</p>
+        ) : (
+          <ImageGrid images={galleryImages} columns={4} />
+        )}
         <div className="home__see-all">
           <Button to="/gallery" variant="outline">View Full Gallery</Button>
         </div>
@@ -118,7 +119,7 @@ export default function Home() {
           </div>
           <div className="home__cta-actions">
             <Button to="/contact" size="lg">Contact Us</Button>
-            <Button to="/about"   size="lg" variant="outline" className="home__cta-outline">
+            <Button to="/about" size="lg" variant="outline" className="home__cta-outline">
               Learn More
             </Button>
           </div>

@@ -9,8 +9,8 @@ export default function AdminLogin() {
   const location  = useLocation()
   const from      = location.state?.from?.pathname ?? '/admin'
 
-  const [username, setUsername] = useState('Arsene')
-  const [password, setPassword] = useState('admin123')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [error,    setError]    = useState('')
   const [loading,  setLoading]  = useState(false)
   const [showPw,   setShowPw]   = useState(false)
@@ -108,8 +108,8 @@ export default function AdminLogin() {
         </form>
 
         <p className="adm-login__hint">
-          {/* Mock auth note — remove when real auth is wired up */}
-          <em>Demo: enter any non-empty username &amp; password.</em>
+          Use credentials created by the seed script:<br />
+          <em>username: admin &nbsp;/&nbsp; password: admin123</em>
         </p>
       </div>
     </div>
