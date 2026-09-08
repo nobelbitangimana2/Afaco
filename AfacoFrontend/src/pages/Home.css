@@ -1,0 +1,185 @@
+/* ── Hero ── */
+.home__hero {
+  margin-top: calc(-1 * var(--nav-height));
+}
+
+.home__hero-content {
+  max-width: 700px;
+  width: 100%;
+}
+
+.home__hero-eyebrow {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.9);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.8rem;
+  border-radius: 3px;
+  margin-bottom: 1.25rem;
+  backdrop-filter: blur(4px);
+}
+
+.home__hero-title {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.home__hero-sub {
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  color: rgba(255,255,255,0.85);
+  line-height: 1.65;
+  max-width: 560px;
+  margin: 0 auto 2rem;
+}
+
+.home__hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.home__hero-outline {
+  border-color: rgba(255,255,255,0.7) !important;
+  color: var(--white) !important;
+}
+
+.home__hero-outline:hover {
+  background: rgba(255,255,255,0.15) !important;
+  border-color: var(--white) !important;
+}
+
+/* ── Mission & Vision ── */
+.home__mv-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .home__mv-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.home__mv-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+
+.home__mv-icon {
+  font-size: 2.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.home__mv-heading {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--green-dark);
+  margin-bottom: 0.75rem;
+}
+
+.home__mv-card p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+/* ── Stats ── */
+.home__stats {
+  background: var(--green-dark);
+  padding: 3rem 1.25rem;
+}
+
+.home__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .home__stats-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.home__stat {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.home__stat-value {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1;
+}
+
+.home__stat-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.65);
+}
+
+/* ── See all link ── */
+.home__see-all {
+  text-align: center;
+  margin-top: 2.5rem;
+}
+
+/* ── CTA Banner ── */
+.home__cta-banner {
+  background: var(--black);
+  padding: 4rem 1.25rem;
+}
+
+.home__cta-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .home__cta-inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.home__cta-title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 0.25rem;
+}
+
+.home__cta-sub {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.95rem;
+}
+
+.home__cta-actions {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.home__cta-outline {
+  border-color: rgba(255,255,255,0.5) !important;
+  color: var(--white) !important;
+}
+
+.home__cta-outline:hover {
+  background: rgba(255,255,255,0.1) !important;
+  border-color: var(--white) !important;
+}

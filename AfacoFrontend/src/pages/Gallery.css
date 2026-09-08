@@ -1,0 +1,41 @@
+.gallery__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.gallery__tab {
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--white);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.gallery__tab:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.gallery__tab--active {
+  background: var(--green);
+  color: var(--white);
+  border-color: var(--green);
+}
+
+.gallery__count {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+
+.gallery__empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 3rem 0;
+}
