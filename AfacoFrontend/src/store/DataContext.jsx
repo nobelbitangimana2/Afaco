@@ -21,24 +21,27 @@ const DEFAULT_CONTACT = {
 }
 
 export function DataProvider({ children }) {
-  const [images,       setImages]       = useState([])
-  const [updates,      setUpdates]      = useState([])
-  const [content,      setContent]      = useState(DEFAULT_CONTENT)
-  const [contact,      setContact]      = useState(DEFAULT_CONTACT)
+  const [images,   setImages]   = useState([])
+  const [updates,  setUpdates]  = useState([])
+  const [products, setProducts] = useState([])
+  const [content,  setContent]  = useState(DEFAULT_CONTENT)
+  const [contact,  setContact]  = useState(DEFAULT_CONTACT)
 
   // ── Initial load ─────────────────────────────────────────────────────────────
   const fetchAll = useCallback(async () => {
     try {
-      const [imgsRes, updsRes, contRes, ctctRes] = await Promise.allSettled([
+      const [imgsRes, updsRes, prodsRes, contRes, ctctRes] = await Promise.allSettled([
         api.get('/api/media'),
         api.get('/api/updates'),
+        api.get('/api/products'),
         api.get('/api/content'),
         api.get('/api/contact'),
       ])
-      if (imgsRes.status === 'fulfilled') setImages(imgsRes.value.data)
-      if (updsRes.status === 'fulfilled') setUpdates(updsRes.value.data)
-      if (contRes.status === 'fulfilled') setContent(contRes.value.data || DEFAULT_CONTENT)
-      if (ctctRes.status === 'fulfilled') setContact(ctctRes.value.data || DEFAULT_CONTACT)
+      if (imgsRes.status  === 'fulfilled') setImages(imgsRes.value.data)
+      if (updsRes.status  === 'fulfilled') setUpdates(updsRes.value.data)
+      if (prodsRes.status === 'fulfilled') setProducts(prodsRes.value.data)
+      if (contRes.status  === 'fulfilled') setContent(contRes.value.data || DEFAULT_CONTENT)
+      if (ctctRes.status  === 'fulfilled') setContact(ctctRes.value.data || DEFAULT_CONTACT)
     } catch (err) {
       console.error('DataContext initial load error:', err)
     }
@@ -125,14 +128,35 @@ export function DataProvider({ children }) {
     return res.data
   }
 
+  // ── Product actions ───────────────────────────────────────────────────────────
+
+  async function addProduct(data) {
+    const res = await api.post('/api/admin/products', data)
+    setProducts((prev) => [res.data, ...prev])
+    return res.data
+  }
+
+  async function editProduct(id, data) {
+    const res = await api.put(`/api/admin/products/${id}`, data)
+    setProducts((prev) => prev.map((p) => (p.id === id ? res.data : p)))
+    return res.data
+  }
+
+  async function deleteProduct(id) {
+    await api.delete(`/api/admin/products/${id}`)
+    setProducts((prev) => prev.filter((p) => p.id !== id))
+  }
+
   return (
     <DataContext.Provider value={{
       // State
-      images, updates, content, contact,
+      images, updates, products, content, contact,
       // Image actions
       addImage, deleteImage, updateImage, reorderImages,
       // Update actions
       addUpdate, editUpdate, deleteUpdate,
+      // Product actions
+      addProduct, editProduct, deleteProduct,
       // Content actions
       saveContent,
       // Contact actions

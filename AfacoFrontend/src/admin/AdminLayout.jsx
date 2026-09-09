@@ -4,11 +4,12 @@ import { useAuth } from '../store/AuthContext'
 import './AdminLayout.css'
 
 const NAV_ITEMS = [
-  { to: '/admin',         label: 'Dashboard', icon: '▦',  end: true },
-  { to: '/admin/media',   label: 'Media',     icon: '🖼'            },
-  { to: '/admin/updates', label: 'Updates',   icon: '📰'            },
-  { to: '/admin/content', label: 'Content',   icon: '✏️'            },
-  { to: '/admin/contact', label: 'Contact',   icon: '📋'            },
+  { to: '/admin',          label: 'Dashboard', icon: '▦',  end: true },
+  { to: '/admin/media',    label: 'Media',     icon: '🖼'            },
+  { to: '/admin/updates',  label: 'Updates',   icon: '📰'            },
+  { to: '/admin/products', label: 'Products',  icon: '🌾'            },
+  { to: '/admin/content',  label: 'Content',   icon: '✏️'            },
+  { to: '/admin/contact',  label: 'Contact',   icon: '📋'            },
 ]
 
 export default function AdminLayout() {

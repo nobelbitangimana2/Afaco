@@ -19,10 +19,13 @@ import ProtectedRoute   from './admin/ProtectedRoute'
 import AdminDashboard   from './admin/AdminDashboard'
 import AdminMedia       from './admin/AdminMedia'
 import AdminUpdates     from './admin/AdminUpdates'
+import AdminProducts    from './admin/AdminProducts'
 import AdminContent     from './admin/AdminContent'
 import AdminContactInfo from './admin/AdminContactInfo'
 
 // ── Public wrapper ─────────────────────────────────────────────────────────
+import Products     from './pages/Products'
+
 function PublicSite() {
   return (
     <div className="site-wrapper">
@@ -32,6 +35,7 @@ function PublicSite() {
           <Route path="/"           element={<Home />}         />
           <Route path="/about"      element={<About />}        />
           <Route path="/activities" element={<Activities />}   />
+          <Route path="/products"   element={<Products />}     />
           <Route path="/gallery"    element={<Gallery />}      />
           <Route path="/news"       element={<News />}         />
           <Route path="/news/:id"   element={<UpdateDetail />} />
@@ -59,11 +63,12 @@ export default function App() {
           </ProtectedRoute>
         }
       >
-        <Route index          element={<AdminDashboard />}   />
-        <Route path="media"   element={<AdminMedia />}       />
-        <Route path="updates" element={<AdminUpdates />}     />
-        <Route path="content" element={<AdminContent />}     />
-        <Route path="contact" element={<AdminContactInfo />} />
+        <Route index           element={<AdminDashboard />}   />
+        <Route path="media"    element={<AdminMedia />}       />
+        <Route path="updates"  element={<AdminUpdates />}     />
+        <Route path="products" element={<AdminProducts />}    />
+        <Route path="content"  element={<AdminContent />}     />
+        <Route path="contact"  element={<AdminContactInfo />} />
       </Route>
 
       {/* ── Public site (catches everything else) ── */}

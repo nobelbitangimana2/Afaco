@@ -4,6 +4,7 @@ import Section    from '../components/Section'
 import UpdateCard from '../components/UpdateCard'
 import ImageGrid  from '../components/ImageGrid'
 import Button     from '../components/Button'
+import { Link }   from 'react-router-dom'
 import { useData } from '../store/DataContext'
 import './Home.css'
 
@@ -22,13 +23,14 @@ const STATS = [
 ]
 
 export default function Home() {
-  const { updates, images, content } = useData()
+  const { updates, images, content, products } = useData()
 
   const latestUpdates = [...updates]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 3)
 
-  const galleryImages = images.slice(0, 8)
+  const previewProducts = products.slice(0, 2)
+  const galleryImages   = images.slice(0, 8)
 
   return (
     <div className="home">
@@ -109,6 +111,43 @@ export default function Home() {
           <Button to="/gallery" variant="outline">View Full Gallery</Button>
         </div>
       </Section>
+
+      {/* ── Products Preview ── */}
+      {previewProducts.length > 0 && (
+        <Section label="Straight from the farm" title="Our Products"
+          subtitle="Quality produce available in multiple packaging sizes for households, traders, and institutions."
+          id="products-preview">
+          <div className="home__products-grid">
+            {previewProducts.map((p) => (
+              <article key={p.id} className="home__prod-card">
+                <div className="home__prod-img-wrap">
+                  {p.imageUrl
+                    ? <img src={p.imageUrl} alt={p.name} className="home__prod-img" loading="lazy" />
+                    : <div className="home__prod-img-placeholder" aria-hidden="true">🌾</div>
+                  }
+                </div>
+                <div className="home__prod-body">
+                  <h3 className="home__prod-name">{p.name}</h3>
+                  {p.description && <p className="home__prod-desc">{p.description}</p>}
+                  {p.sizes && p.sizes.length > 0 && (
+                    <div className="home__prod-sizes">
+                      {p.sizes.map(({ size }) => (
+                        <span key={size} className="home__prod-size-badge">{size}</span>
+                      ))}
+                    </div>
+                  )}
+                  <Link to="/products" className="home__prod-link">
+                    View details →
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+          <div className="home__see-all">
+            <Button to="/products" variant="outline">View All Products</Button>
+          </div>
+        </Section>
+      )}
 
       {/* ── CTA Banner ── */}
       <section className="home__cta-banner" aria-label="Call to action">

@@ -6,11 +6,12 @@ const mongoose   = require('mongoose')
 const cors       = require('cors')
 const path       = require('path')
 
-const authRoutes    = require('./routes/auth')
-const mediaRoutes   = require('./routes/media')
-const updatesRoutes = require('./routes/updates')
-const contentRoutes = require('./routes/content')
-const contactRoutes = require('./routes/contact')
+const authRoutes     = require('./routes/auth')
+const mediaRoutes    = require('./routes/media')
+const updatesRoutes  = require('./routes/updates')
+const contentRoutes  = require('./routes/content')
+const contactRoutes  = require('./routes/contact')
+const productsRoutes = require('./routes/products')
 
 const app  = express()
 const PORT = process.env.PORT || 5000
@@ -50,6 +51,7 @@ app.use('/api',         mediaRoutes)    // GET /api/media (public) + /api/admin/
 app.use('/api',         updatesRoutes)  // GET /api/updates + /api/admin/updates
 app.use('/api',         contentRoutes)  // GET /api/content + /api/admin/content
 app.use('/api',         contactRoutes)  // GET /api/contact + /api/admin/contact
+app.use('/api',         productsRoutes) // GET /api/products + /api/admin/products
 
 // ── Health check ───────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))

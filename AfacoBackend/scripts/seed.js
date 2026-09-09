@@ -19,6 +19,7 @@ const mongoose    = require('mongoose')
 const bcrypt      = require('bcryptjs')
 const Admin       = require('../models/Admin')
 const Update      = require('../models/Update')
+const Product     = require('../models/Product')
 const SiteContent = require('../models/SiteContent')
 const Contact     = require('../models/Contact')
 
@@ -126,6 +127,54 @@ async function seed() {
     console.log('✓ Sample updates seeded (6 records)')
   } else {
     console.log(`– Updates already exist (${updateCount} records), skipping`)
+  }
+
+  // ── Sample products ────────────────────────────────────────────────────────
+  const productCount = await Product.countDocuments()
+  if (productCount === 0) {
+    await Product.insertMany([
+      {
+        name:        'White Rice',
+        description: 'Premium long-grain white rice, sun-dried and stone-milled by AFACO member cooperatives in North Kivu.',
+        imageUrl:    'https://images.unsplash.com/photo-1536304993881-ff86e0c9f129?w=800&q=80',
+        sizes: [
+          { size: '1kg',   price: 1.50  },
+          { size: '5kg',   price: 6.50  },
+          { size: '10kg',  price: 12.00 },
+          { size: '25kg',  price: 28.00 },
+          { size: '50kg',  price: 52.00 },
+          { size: '100kg', price: 0     },
+        ],
+      },
+      {
+        name:        'Parboiled Rice',
+        description: 'Nutritionally rich parboiled rice. Retains more vitamins and minerals than standard white rice. Ideal for bulk buyers and institutions.',
+        imageUrl:    'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80',
+        sizes: [
+          { size: '1kg',   price: 1.80  },
+          { size: '5kg',   price: 8.00  },
+          { size: '10kg',  price: 14.50 },
+          { size: '25kg',  price: 33.00 },
+          { size: '50kg',  price: 60.00 },
+          { size: '100kg', price: 0     },
+        ],
+      },
+      {
+        name:        'Dried Maize',
+        description: 'Sun-dried whole maize grain, sourced directly from AFACO cooperative farms. Suitable for milling, animal feed, and household use.',
+        imageUrl:    'https://images.unsplash.com/photo-1601593346740-925612772716?w=800&q=80',
+        sizes: [
+          { size: '5kg',   price: 4.00  },
+          { size: '10kg',  price: 7.50  },
+          { size: '25kg',  price: 17.00 },
+          { size: '50kg',  price: 30.00 },
+          { size: '100kg', price: 0     },
+        ],
+      },
+    ])
+    console.log('✓ Sample products seeded (3 records)')
+  } else {
+    console.log(`– Products already exist (${productCount} records), skipping`)
   }
 
   await mongoose.disconnect()
