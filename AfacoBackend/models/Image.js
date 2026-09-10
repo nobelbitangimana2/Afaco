@@ -4,15 +4,17 @@ const mongoose = require('mongoose')
 
 const imageSchema = new mongoose.Schema(
   {
-    url:          { type: String, required: true },   // full-size WebP path (relative to /uploads)
-    thumbnailUrl: { type: String, required: true },   // thumb WebP path
+    url:          { type: String, required: true },   // full-size CDN URL from ImageKit
+    thumbnailUrl: { type: String, required: true },   // thumbnail CDN URL from ImageKit
     alt:          { type: String, default: '' },
     category:     {
       type: String,
       enum: ['farmland', 'farmers', 'activities', 'harvest', 'infrastructure', 'community', 'general'],
       default: 'general',
     },
-    order:        { type: Number, default: 0 },       // for drag-and-drop ordering
+    order:               { type: Number, default: 0 },
+    imagekitFileId:      { type: String, default: '' }, // used for deletion
+    imagekitThumbFileId: { type: String, default: '' }, // used for deletion
   },
   { timestamps: true }
 )

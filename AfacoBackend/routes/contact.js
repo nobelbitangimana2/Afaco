@@ -56,8 +56,7 @@ router.post('/contact/submit', async (req, res, next) => {
     res.json({ success: true })
   } catch (err) {
     console.error('Email send error:', err.message)
-    // Still return success to the user — log the error server-side
-    next(err)
+    return res.status(500).json({ error: 'Failed to send message. Please try again later.' })
   }
 })
 

@@ -3,24 +3,29 @@
 const express     = require('express')
 const multer      = require('multer')
 const sharp       = require('sharp')
-const path        = require('path')
-const fs          = require('fs')
+const { ImageKit }  = require('@imagekit/nodejs')
 const Image       = require('../models/Image')
 const requireAuth = require('../middleware/auth')
 
 const router = express.Router()
 
-// ── Upload directory ───────────────────────────────────────────────────────────
-const UPLOAD_DIR = path.join(__dirname, '..', 'uploads')
-const THUMB_DIR  = path.join(UPLOAD_DIR, 'thumbnails')
-fs.mkdirSync(UPLOAD_DIR, { recursive: true })
-fs.mkdirSync(THUMB_DIR,  { recursive: true })
+// ── ImageKit client (lazy — reads env vars at request time, not module load) ──
+let _imagekit = null
+function getImageKit() {
+  if (!_imagekit) {
+    _imagekit = new ImageKit({
+      publicKey:   process.env.IMAGEKIT_PUBLIC_KEY,
+      privateKey:  process.env.IMAGEKIT_PRIVATE_KEY,
+      urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+    })
+  }
+  return _imagekit
+}
 
-// ── Multer — store in memory so Sharp can process before writing ───────────────
-const storage = multer.memoryStorage()
-const upload  = multer({
-  storage,
-  limits: { fileSize: 20 * 1024 * 1024 },   // 20 MB raw limit
+// ── Multer — memory storage so Sharp can process before upload ─────────────────
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits:  { fileSize: 20 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     if (!file.mimetype.startsWith('image/')) {
       return cb(new Error('Only image files are accepted.'))
@@ -29,28 +34,17 @@ const upload  = multer({
   },
 })
 
-// ── Helper: build public URL from relative path ────────────────────────────────
-function publicUrl(req, relativePath) {
-  return `${req.protocol}://${req.get('host')}/${relativePath}`
-}
-
 // ── PUBLIC ─────────────────────────────────────────────────────────────────────
 
 /**
  * GET /api/media
- * Returns all images, sorted by `order` then `createdAt`.
+ * Returns all images sorted by order then createdAt.
+ * URLs are already absolute (stored as ImageKit CDN URLs).
  */
 router.get('/media', async (req, res, next) => {
   try {
     const images = await Image.find().sort({ order: 1, createdAt: -1 })
-    // Prefix server origin onto stored paths
-    const result = images.map((img) => {
-      const obj = img.toJSON()
-      if (!obj.url.startsWith('http'))          obj.url          = publicUrl(req, obj.url)
-      if (!obj.thumbnailUrl.startsWith('http')) obj.thumbnailUrl = publicUrl(req, obj.thumbnailUrl)
-      return obj
-    })
-    res.json(result)
+    res.json(images)
   } catch (err) {
     next(err)
   }
@@ -63,45 +57,56 @@ router.get('/media', async (req, res, next) => {
  * Field: `image` (single file), body: { category, alt }
  *
  * Pipeline:
- *  1. Multer reads into memory buffer
- *  2. Sharp → resize to max 1600px wide → convert to WebP (quality 82)
- *  3. Sharp → resize to max 400px wide  → convert to WebP (quality 75) as thumbnail
- *  4. Write both files to /uploads and /uploads/thumbnails
- *  5. Save paths + metadata to MongoDB
+ *  1. Multer reads file into memory buffer
+ *  2. Sharp → resize to max 1600px → WebP quality 82  (full size)
+ *  3. Sharp → resize to max 400px  → WebP quality 75  (thumbnail)
+ *  4. Upload both buffers to ImageKit
+ *  5. Save returned CDN URLs to MongoDB
  */
 router.post('/admin/media/upload', requireAuth, upload.single('image'), async (req, res, next) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded.' })
 
-    const filename  = `${Date.now()}-${Math.random().toString(36).slice(2)}.webp`
-    const fullPath  = path.join(UPLOAD_DIR, filename)
-    const thumbPath = path.join(THUMB_DIR, filename)
+    const basename = `${Date.now()}-${Math.random().toString(36).slice(2)}`
 
-    // Full-size: max width 1600px, WebP quality 82
-    await sharp(req.file.buffer)
+    // Process full-size
+    const fullBuffer = await sharp(req.file.buffer)
       .resize({ width: 1600, withoutEnlargement: true })
       .webp({ quality: 82 })
-      .toFile(fullPath)
+      .toBuffer()
 
-    // Thumbnail: max width 400px, WebP quality 75
-    await sharp(req.file.buffer)
+    // Process thumbnail
+    const thumbBuffer = await sharp(req.file.buffer)
       .resize({ width: 400, withoutEnlargement: true })
       .webp({ quality: 75 })
-      .toFile(thumbPath)
+      .toBuffer()
+
+    // Upload full-size to ImageKit
+    const fullUpload = await getImageKit().files.upload({
+      file:     fullBuffer,
+      fileName: `${basename}.webp`,
+      folder:   '/afaco/media',
+    })
+
+    // Upload thumbnail to ImageKit
+    const thumbUpload = await getImageKit().files.upload({
+      file:     thumbBuffer,
+      fileName: `${basename}_thumb.webp`,
+      folder:   '/afaco/thumbnails',
+    })
 
     const image = await Image.create({
-      url:          `uploads/${filename}`,
-      thumbnailUrl: `uploads/thumbnails/${filename}`,
+      url:          fullUpload.url,
+      thumbnailUrl: thumbUpload.url,
       alt:          req.body.alt      || '',
       category:     req.body.category || 'general',
       order:        0,
+      // Store ImageKit file IDs for deletion later
+      imagekitFileId:      fullUpload.fileId,
+      imagekitThumbFileId: thumbUpload.fileId,
     })
 
-    const obj = image.toJSON()
-    obj.url          = publicUrl(req, obj.url)
-    obj.thumbnailUrl = publicUrl(req, obj.thumbnailUrl)
-
-    res.status(201).json(obj)
+    res.status(201).json(image)
   } catch (err) {
     next(err)
   }
@@ -120,11 +125,7 @@ router.patch('/admin/media/:id', requireAuth, async (req, res, next) => {
 
     const image = await Image.findByIdAndUpdate(req.params.id, allowed, { new: true })
     if (!image) return res.status(404).json({ error: 'Image not found.' })
-
-    const obj = image.toJSON()
-    obj.url          = publicUrl(req, obj.url)
-    obj.thumbnailUrl = publicUrl(req, obj.thumbnailUrl)
-    res.json(obj)
+    res.json(image)
   } catch (err) {
     next(err)
   }
@@ -132,7 +133,7 @@ router.patch('/admin/media/:id', requireAuth, async (req, res, next) => {
 
 /**
  * PUT /api/admin/media/reorder
- * Body: { category, ids }  — ordered array of image IDs within a category
+ * Body: { ids } — ordered array of image IDs
  */
 router.put('/admin/media/reorder', requireAuth, async (req, res, next) => {
   try {
@@ -151,18 +152,24 @@ router.put('/admin/media/reorder', requireAuth, async (req, res, next) => {
 
 /**
  * DELETE /api/admin/media/:id
- * Removes DB record and deletes both files from disk.
+ * Deletes from ImageKit and removes the DB record.
  */
 router.delete('/admin/media/:id', requireAuth, async (req, res, next) => {
   try {
     const image = await Image.findByIdAndDelete(req.params.id)
     if (!image) return res.status(404).json({ error: 'Image not found.' })
 
-    // Remove files — ignore errors if already missing
-    const fullPath  = path.join(__dirname, '..', image.url)
-    const thumbPath = path.join(__dirname, '..', image.thumbnailUrl)
-    fs.unlink(fullPath,  (err) => { if (err && err.code !== 'ENOENT') console.warn(err) })
-    fs.unlink(thumbPath, (err) => { if (err && err.code !== 'ENOENT') console.warn(err) })
+    // Delete from ImageKit (ignore errors if already gone)
+    const deleteIds = [image.imagekitFileId, image.imagekitThumbFileId].filter(Boolean)
+    if (deleteIds.length) {
+      try {
+        for (const fileId of deleteIds) {
+          await getImageKit().files.delete(fileId)
+        }
+      } catch (e) {
+        console.warn('ImageKit delete warning:', e.message)
+      }
+    }
 
     res.json({ message: 'Image deleted.' })
   } catch (err) {
