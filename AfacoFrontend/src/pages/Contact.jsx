@@ -54,8 +54,9 @@ export default function Contact() {
       setFields(INITIAL)
       setTouched({})
       setErrors({})
-    } catch {
+    } catch (err) {
       setStatus('error')
+      console.error('Contact form error:', err.message)
     }
   }
 

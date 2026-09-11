@@ -1,20 +1,28 @@
 'use strict'
 
-const express      = require('express')
-const nodemailer   = require('nodemailer')
-const Contact      = require('../models/Contact')
-const requireAuth  = require('../middleware/auth')
+const express     = require('express')
+const nodemailer  = require('nodemailer')
+const Contact     = require('../models/Contact')
+const requireAuth = require('../middleware/auth')
 
 const router = express.Router()
 
-// ── Nodemailer transporter ─────────────────────────────────────────────────────
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-})
+// ── Nodemailer transporter (lazy — reads env at request time) ─────────────────
+let _transporter = null
+function getTransporter() {
+  if (!_transporter) {
+    _transporter = nodemailer.createTransport({
+      host:   'smtp.gmail.com',
+      port:   465,
+      secure: true,           // SSL
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    })
+  }
+  return _transporter
+}
 
 /** GET /api/contact — public */
 router.get('/contact', async (req, res, next) => {
@@ -28,7 +36,7 @@ router.get('/contact', async (req, res, next) => {
 
 /**
  * POST /api/contact/submit — public contact form
- * Sends an email notification to EMAIL_TO
+ * Sends an email to EMAIL_TO, reply-to set to the sender's address.
  */
 router.post('/contact/submit', async (req, res, next) => {
   try {
@@ -37,17 +45,23 @@ router.post('/contact/submit', async (req, res, next) => {
       return res.status(400).json({ error: 'name, email, and message are required.' })
     }
 
-    await transporter.sendMail({
+    // Guard: if credentials not configured, log clearly and return error
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error('Email not configured: EMAIL_USER or EMAIL_PASS missing from environment.')
+      return res.status(500).json({ error: 'Email service not configured.' })
+    }
+
+    await getTransporter().sendMail({
       from:    `"AFACO Website" <${process.env.EMAIL_USER}>`,
-      to:      process.env.EMAIL_TO,
+      to:      process.env.EMAIL_TO || process.env.EMAIL_USER,
       replyTo: email,
       subject: `New contact form message from ${name}`,
       html: `
-        <h2>New message from the AFACO contact form</h2>
+        <h2 style="color:#1b4332">New message from the AFACO contact form</h2>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
         <p><strong>Message:</strong></p>
-        <p style="white-space:pre-line">${message}</p>
+        <p style="white-space:pre-line;background:#f4f6f8;padding:1rem;border-radius:4px">${message}</p>
         <hr/>
         <p style="color:#666;font-size:12px">Sent from the AFACO website contact form.</p>
       `,
@@ -56,7 +70,9 @@ router.post('/contact/submit', async (req, res, next) => {
     res.json({ success: true })
   } catch (err) {
     console.error('Email send error:', err.message)
-    return res.status(500).json({ error: 'Failed to send message. Please try again later.' })
+    // Reset transporter so next request tries fresh credentials
+    _transporter = null
+    return res.status(500).json({ error: err.message })
   }
 })
 
