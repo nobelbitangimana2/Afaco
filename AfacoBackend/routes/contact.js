@@ -1,31 +1,17 @@
 'use strict'
 
 const express     = require('express')
-const nodemailer  = require('nodemailer')
+const { Resend }  = require('resend')
 const Contact     = require('../models/Contact')
 const requireAuth = require('../middleware/auth')
 
 const router = express.Router()
 
-// ── Nodemailer transporter (lazy — reads env at request time) ─────────────────
-let _transporter = null
-function getTransporter() {
-  if (!_transporter) {
-    _transporter = nodemailer.createTransport({
-      host:   'smtp.gmail.com',
-      port:   587,
-      secure: false,          // STARTTLS on port 587
-      family: 4,              // force IPv4 — Render free tier doesn't support IPv6
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    })
-  }
-  return _transporter
+// ── Resend client (lazy — reads env at request time) ──────────────────────────
+let _resend = null
+function getResend() {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY)
+  return _resend
 }
 
 /** GET /api/contact — public */
@@ -40,7 +26,7 @@ router.get('/contact', async (req, res, next) => {
 
 /**
  * POST /api/contact/submit — public contact form
- * Sends an email to EMAIL_TO, reply-to set to the sender's address.
+ * Sends via Resend HTTP API (works on Render free tier — uses port 443)
  */
 router.post('/contact/submit', async (req, res, next) => {
   try {
@@ -49,17 +35,16 @@ router.post('/contact/submit', async (req, res, next) => {
       return res.status(400).json({ error: 'name, email, and message are required.' })
     }
 
-    // Guard: if credentials not configured, log clearly and return error
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.error('Email not configured: EMAIL_USER or EMAIL_PASS missing from environment.')
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY is not set.')
       return res.status(500).json({ error: 'Email service not configured.' })
     }
 
-    await getTransporter().sendMail({
-      from:    `"AFACO Website" <${process.env.EMAIL_USER}>`,
-      to:      process.env.EMAIL_TO || process.env.EMAIL_USER,
-      replyTo: email,
-      subject: `New contact form message from ${name}`,
+    const { error } = await getResend().emails.send({
+      from:     'AFACO Website <onboarding@resend.dev>',
+      to:       [process.env.EMAIL_TO || 'nobelbitangimana2@gmail.com'],
+      replyTo:  email,
+      subject:  `New contact form message from ${name}`,
       html: `
         <h2 style="color:#1b4332">New message from the AFACO contact form</h2>
         <p><strong>Name:</strong> ${name}</p>
@@ -71,11 +56,14 @@ router.post('/contact/submit', async (req, res, next) => {
       `,
     })
 
+    if (error) {
+      console.error('Resend error:', error)
+      return res.status(500).json({ error: error.message })
+    }
+
     res.json({ success: true })
   } catch (err) {
     console.error('Email send error:', err.message)
-    // Reset transporter so next request tries fresh credentials
-    _transporter = null
     return res.status(500).json({ error: err.message })
   }
 })
