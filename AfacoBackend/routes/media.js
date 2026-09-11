@@ -81,16 +81,16 @@ router.post('/admin/media/upload', requireAuth, upload.single('image'), async (r
       .webp({ quality: 75 })
       .toBuffer()
 
-    // Upload full-size to ImageKit
+    // Upload full-size to ImageKit (buffer must be base64 encoded)
     const fullUpload = await getImageKit().files.upload({
-      file:     fullBuffer,
+      file:     fullBuffer.toString('base64'),
       fileName: `${basename}.webp`,
       folder:   '/afaco/media',
     })
 
     // Upload thumbnail to ImageKit
     const thumbUpload = await getImageKit().files.upload({
-      file:     thumbBuffer,
+      file:     thumbBuffer.toString('base64'),
       fileName: `${basename}_thumb.webp`,
       folder:   '/afaco/thumbnails',
     })
@@ -108,6 +108,7 @@ router.post('/admin/media/upload', requireAuth, upload.single('image'), async (r
 
     res.status(201).json(image)
   } catch (err) {
+    console.error('Upload error:', err.message, err.stack)
     next(err)
   }
 })
