@@ -13,11 +13,15 @@ function getTransporter() {
   if (!_transporter) {
     _transporter = nodemailer.createTransport({
       host:   'smtp.gmail.com',
-      port:   465,
-      secure: true,           // SSL
+      port:   587,
+      secure: false,          // STARTTLS on port 587
+      family: 4,              // force IPv4 — Render free tier doesn't support IPv6
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
       },
     })
   }
