@@ -28,7 +28,13 @@
   flex-shrink: 0;
 }
 
-.navbar__logo-leaf { font-size: 1.4rem; line-height: 1; }
+.navbar__logo-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
 
 .navbar__logo-text {
   font-size: 1.25rem;

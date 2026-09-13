@@ -36,7 +36,7 @@ export default function Footer() {
         {/* Brand col */}
         <div className="footer__brand">
           <Link to="/" className="footer__logo" aria-label="AFACO Home">
-            <span aria-hidden="true">🌿</span>
+            <img src="/AfacoLogo.jpeg" alt="AFACO logo" className="footer__logo-img" />
             <span>AFACO</span>
           </Link>
           <p className="footer__tagline">
