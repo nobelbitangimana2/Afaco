@@ -40,7 +40,7 @@ export default function Footer() {
             <span>AFACO</span>
           </Link>
           <p className="footer__tagline">
-            Empowering smallholder farmers across Central Africa through quality produce, training, and market access.
+            Empowering smallholder farmers across Burundi through quality produce, training, and market access.
           </p>
           <div className="footer__social" aria-label="Social media links">
             {Object.entries(socialLinks).map(([platform, url]) =>

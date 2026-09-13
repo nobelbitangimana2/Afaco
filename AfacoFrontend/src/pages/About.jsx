@@ -5,19 +5,19 @@ import { useData } from '../store/DataContext'
 import './About.css'
 
 const TIMELINE = [
-  { year: '2008', text: 'AFACO founded by 12 farmers in Butembo with a shared goal of improving crop yields and market access.' },
-  { year: '2011', text: 'First formal cooperative training programme launched, reaching 200 farmers across North Kivu.' },
-  { year: '2014', text: 'Expanded to Lubero and Masisi districts; opened the first AFACO demonstration farm.' },
+  { year: '2008', text: 'AFACO founded by a group of farmers in Bujumbura, Burundi, with a shared goal of improving rice yields and local food security.' },
+  { year: '2011', text: 'First formal cooperative training programme launched, reaching farmers across multiple provinces of Burundi.' },
+  { year: '2014', text: 'Expanded operations to additional provinces; opened the first AFACO demonstration farm.' },
   { year: '2017', text: 'Secured multilateral funding for irrigation infrastructure, benefiting over 500 farming families.' },
   { year: '2020', text: 'Launched Women in Agriculture Programme and Youth in Agribusiness initiative.' },
-  { year: '2023', text: 'Reached 1,800+ enrolled farmers across 8 districts; commissioned solar-powered drip irrigation.' },
-  { year: '2026', text: 'Expanding the high-yield rice programme to three new districts with regional seed bank support.' },
+  { year: '2023', text: 'Reached 1,800+ enrolled farmers across 8 provinces; commissioned solar-powered drip irrigation.' },
+  { year: '2026', text: 'Expanding the high-yield rice programme to new provinces with regional seed bank support.' },
 ]
 
 const PARTNERS = [
   'Great Lakes Regional Seed Bank',
-  'Ministry of Agriculture – DRC',
-  'FAO Central Africa',
+  'Ministry of Agriculture – Burundi',
+  'FAO East Africa',
   'International Fund for Agricultural Development',
   'Local Farmers\' Cooperative Union',
   'Regional Agricultural University Network',
@@ -38,7 +38,7 @@ export default function About() {
           <h1 className="page-hero__title">Who We Are</h1>
           <p className="page-hero__sub">
             A farmer-led agricultural organisation committed to food security, quality produce,
-            and sustainable livelihoods across Central Africa.
+            and sustainable livelihoods across Burundi.
           </p>
         </div>
       </div>

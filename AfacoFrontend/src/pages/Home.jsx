@@ -51,7 +51,7 @@ export default function Home() {
             <span className="h-hero__title--gold">AFACO's Harvest</span>
           </h1>
           <p className="h-hero__sub">
-            We grow premium rice and support 1,800+ smallholder farmers across Central Africa
+            We grow premium rice and support 1,800+ smallholder farmers across Burundi
             through training, irrigation, and direct market access.
           </p>
           <Button to="/products" size="lg">Explore our products</Button>

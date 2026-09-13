@@ -41,8 +41,8 @@ async function seed() {
   const existingContent = await SiteContent.findOne()
   if (!existingContent) {
     await SiteContent.create({
-      mission: 'To empower smallholder farmers across Central Africa with the knowledge, tools, infrastructure, and market connections they need to build sustainable livelihoods, strengthen local food systems, and contribute to long-term regional food security.',
-      vision:  'A Central Africa where every farming community — regardless of geography, gender, or economic status — has equitable access to quality inputs, modern techniques, fair markets, and the social infrastructure needed to thrive.',
+      mission: 'To empower smallholder farmers across Burundi with the knowledge, tools, infrastructure, and market connections they need to build sustainable livelihoods, strengthen local food systems, and contribute to long-term food security in the Great Lakes region.',
+      vision:  'A Burundi where every farming community — regardless of geography, gender, or economic status — has equitable access to quality inputs, modern techniques, fair markets, and the social infrastructure needed to thrive.',
     })
     console.log('✓ Site content seeded')
   } else {
@@ -53,11 +53,11 @@ async function seed() {
   const existingContact = await Contact.findOne()
   if (!existingContact) {
     await Contact.create({
-      address:     '12 Avenue Agricole, Butembo, North Kivu, Democratic Republic of Congo',
-      phone:       '+243 997 123 456',
+      address:     'Avenue de la Plage, Bujumbura, Burundi',
+      phone:       '+257 22 123 456',
       email:       'info@afaco.org',
-      officeHours: 'Monday – Friday, 08:00 – 17:00 (CAT)',
-      mapEmbedUrl: 'https://www.openstreetmap.org/export/embed.html?bbox=29.27%2C0.13%2C29.30%2C0.16&layer=mapnik',
+      officeHours: 'Monday – Friday, 08:00 – 17:00 (EAT)',
+      mapEmbedUrl: 'https://www.openstreetmap.org/export/embed.html?bbox=29.34%2C-3.39%2C29.38%2C-3.36&layer=mapnik',
       socialLinks: {
         facebook:  'https://facebook.com/afaco',
         twitter:   'https://twitter.com/afaco',
@@ -79,15 +79,15 @@ async function seed() {
         title:    'AFACO Expands Rice Cultivation to New Districts',
         date:     '2026-08-20',
         excerpt:  'Following a successful pilot season, AFACO has extended its high-yield rice programme to three additional districts, benefiting over 400 smallholder families.',
-        body:     'Following a successful pilot season in Butembo and Lubero, AFACO has extended its high-yield rice cultivation programme to three additional districts: Masisi, Rutshuru, and Walikale.\n\nThe expansion is part of our five-year food security strategy and comes after pilot farms recorded an average 38 % yield increase compared to traditional methods.\n\nOver 400 smallholder families are expected to benefit directly in the first growing cycle.',
+        body:     'Following a successful pilot season in Gitega and Ngozi, AFACO has extended its high-yield rice cultivation programme to three additional provinces: Kayanza, Muyinga, and Kirundo.\n\nThe expansion is part of our five-year food security strategy and comes after pilot farms recorded an average 38 % yield increase compared to traditional methods.\n\nOver 400 smallholder families are expected to benefit directly in the first growing cycle.',
         imageUrl: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
         category: 'agriculture',
       },
       {
-        title:    'Farmer Training Workshop Concludes in Goma',
+        title:    'Farmer Training Workshop Concludes in Bujumbura',
         date:     '2026-07-14',
         excerpt:  'A two-week intensive training on modern farming techniques wrapped up with 120 participants receiving certificates of completion.',
-        body:     'A two-week intensive training workshop concluded successfully in Goma on 14 July 2026. The workshop was attended by 120 participants from farming cooperatives across North Kivu.\n\nAll 120 participants received certificates of completion and a starter kit including improved seed varieties.',
+        body:     'A two-week intensive training workshop concluded successfully in Bujumbura on 14 July 2026. The workshop was attended by 120 participants from farming cooperatives across Burundi.\n\nAll 120 participants received certificates of completion and a starter kit including improved seed varieties.',
         imageUrl: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80',
         category: 'training',
       },
@@ -135,7 +135,7 @@ async function seed() {
     await Product.insertMany([
       {
         name:        'White Rice',
-        description: 'Premium long-grain white rice, sun-dried and stone-milled by AFACO member cooperatives in North Kivu.',
+        description: 'Premium long-grain white rice, sun-dried and stone-milled by AFACO member cooperatives in Burundi.',
         imageUrl:    'https://images.unsplash.com/photo-1536304993881-ff86e0c9f129?w=800&q=80',
         sizes: [
           { size: '1kg',   price: 1.50  },
