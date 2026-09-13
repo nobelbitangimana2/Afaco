@@ -4,7 +4,7 @@
   justify-content: center;
   gap: 0.4rem;
   font-family: inherit;
-  font-weight: 600;
+  font-weight: 700;
   border-radius: var(--radius-pill);
   border: 2px solid transparent;
   cursor: pointer;
@@ -14,61 +14,34 @@
   line-height: 1;
   letter-spacing: 0.01em;
 }
-
-.btn:hover { transform: translateY(-1px); }
+.btn:hover  { transform: translateY(-1px); }
 .btn:active { transform: translateY(0); }
 
 /* Sizes */
-.btn--sm  { font-size: 0.78rem; padding: 0.45rem 1rem;  }
-.btn--md  { font-size: 0.9rem;  padding: 0.65rem 1.5rem; }
-.btn--lg  { font-size: 1rem;    padding: 0.85rem 2.1rem; }
+.btn--sm { font-size: 0.78rem; padding: 0.45rem 1rem; }
+.btn--md { font-size: 0.9rem;  padding: 0.65rem 1.5rem; }
+.btn--lg { font-size: 1rem;    padding: 0.85rem 2.1rem; }
 
-/* Variants */
-.btn--primary {
-  background: var(--green);
-  color: var(--white);
-  border-color: var(--green);
-}
-.btn--primary:hover {
-  background: var(--green-mid);
-  border-color: var(--green-mid);
-}
+/* Primary — gold fill */
+.btn--primary { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+.btn--primary:hover { background: var(--gold-light); border-color: var(--gold-light); }
 
-.btn--secondary {
-  background: var(--green-dark);
-  color: var(--white);
-  border-color: var(--green-dark);
-}
-.btn--secondary:hover { background: #122b20; border-color: #122b20; }
+/* Secondary — panel fill */
+.btn--secondary { background: var(--bg-panel); color: var(--text-head); border-color: var(--bg-border); }
+.btn--secondary:hover { background: var(--bg-card); }
 
-.btn--outline {
-  background: transparent;
-  color: var(--green);
-  border-color: var(--green);
-}
-.btn--outline:hover {
-  background: var(--green);
-  color: var(--white);
-}
+/* Outline gold */
+.btn--outline { background: transparent; color: var(--gold); border-color: var(--gold); }
+.btn--outline:hover { background: var(--gold); color: var(--bg); }
 
-/* Outlined white — for use on dark/photo backgrounds */
-.btn--outline-white {
-  background: transparent;
-  color: var(--white);
-  border-color: rgba(255,255,255,0.7);
-}
-.btn--outline-white:hover {
-  background: rgba(255,255,255,0.15);
-  border-color: var(--white);
-}
+/* Outline white — on photo/dark bg */
+.btn--outline-white { background: transparent; color: var(--text-head); border-color: rgba(242,237,228,0.55); }
+.btn--outline-white:hover { background: rgba(242,237,228,0.12); border-color: var(--text-head); }
 
-.btn--ghost {
-  background: transparent;
-  color: var(--green);
-  border-color: transparent;
-}
-.btn--ghost:hover { background: var(--green-light); }
+/* Ghost */
+.btn--ghost { background: transparent; color: var(--gold); border-color: transparent; }
+.btn--ghost:hover { background: var(--bg-panel); }
 
 /* Modifiers */
-.btn--full    { width: 100%; }
-.btn--disabled { opacity: 0.5; pointer-events: none; }
+.btn--full     { width: 100%; }
+.btn--disabled { opacity: 0.45; pointer-events: none; }
