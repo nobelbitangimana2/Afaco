@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import Section from '../components/Section'
-import Button  from '../components/Button'
+import Button   from '../components/Button'
 import { useData } from '../store/DataContext'
 import './Products.css'
 
@@ -10,39 +9,50 @@ export default function Products() {
 
   return (
     <div className="products-page">
-      {/* Hero */}
-      <div className="page-hero page-hero--green">
+
+      <div className="page-hero">
         <div className="container page-hero__inner">
-          <span className="page-hero__label">What we produce</span>
+          <span className="page-hero__label">From our farms</span>
           <h1 className="page-hero__title">Our Products</h1>
           <p className="page-hero__sub">
-            Quality agricultural produce grown and processed by AFACO member
-            cooperatives. Available in multiple packaging sizes for households,
-            traders, and institutions.
+            Quality rice and agricultural produce grown by AFACO member cooperatives,
+            available in multiple packaging sizes for every need.
           </p>
         </div>
       </div>
 
-      <Section id="products-list">
-        {products.length === 0 ? (
-          <p className="products__loading">Loading products…</p>
-        ) : (
-          <div className="products__grid">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        )}
-
-        {/* Contact CTA */}
-        <div className="products__cta">
-          <h2 className="products__cta-title">Looking to place a bulk order?</h2>
-          <p className="products__cta-sub">
-            Contact us for wholesale pricing, custom packaging, and delivery arrangements.
-          </p>
-          <Button to="/contact" size="lg">Get in Touch</Button>
+      <section className="section section--white">
+        <div className="container">
+          {products.length === 0 ? (
+            <p className="products__loading">Loading products…</p>
+          ) : (
+            <div className="products__grid">
+              {products.map(p => <ProductCard key={p.id} product={p} />)}
+            </div>
+          )}
         </div>
-      </Section>
+      </section>
+
+      {/* Bulk CTA banner */}
+      <section className="prod-cta">
+        <div className="prod-cta__photo">
+          <img
+            src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=900&q=80"
+            alt="AFACO rice fields"
+            loading="lazy"
+          />
+        </div>
+        <div className="prod-cta__text">
+          <span className="section__label" style={{ color:'var(--green-light)' }}>Bulk Orders</span>
+          <h2 className="prod-cta__title">Need a custom quote?</h2>
+          <p className="prod-cta__sub">
+            We supply traders, institutions, and NGOs across Central Africa.
+            Contact us for wholesale pricing and delivery terms.
+          </p>
+          <Button to="/contact" size="lg">Request a Quote</Button>
+        </div>
+      </section>
+
     </div>
   )
 }
@@ -52,41 +62,31 @@ function ProductCard({ product }) {
 
   return (
     <article className="prod-card">
-      {/* Photo */}
       <div className="prod-card__img-wrap">
-        {imageUrl ? (
-          <img src={imageUrl} alt={name} className="prod-card__img" loading="lazy" />
-        ) : (
-          <div className="prod-card__img-placeholder" aria-hidden="true">🌾</div>
-        )}
+        {imageUrl
+          ? <img src={imageUrl} alt={name} className="prod-card__img" loading="lazy" />
+          : <div className="prod-card__img-placeholder" aria-hidden="true">🌾</div>
+        }
       </div>
-
-      {/* Info */}
       <div className="prod-card__body">
         <h3 className="prod-card__name">{name}</h3>
         {description && <p className="prod-card__desc">{description}</p>}
 
-        {/* Sizes table */}
         {sizes.length > 0 && (
           <div className="prod-card__sizes">
-            <p className="prod-card__sizes-label">Available sizes &amp; pricing</p>
-            <table className="prod-card__sizes-table">
+            <p className="prod-card__sizes-label">Sizes &amp; Pricing</p>
+            <table className="prod-card__table">
               <thead>
-                <tr>
-                  <th>Size</th>
-                  <th>Price</th>
-                </tr>
+                <tr><th>Size</th><th>Price</th></tr>
               </thead>
               <tbody>
                 {sizes.map(({ size, price }) => (
                   <tr key={size}>
-                    <td>
-                      <span className="prod-card__size-badge">{size}</span>
-                    </td>
+                    <td><span className="prod-card__size-pill">{size}</span></td>
                     <td className="prod-card__price">
                       {price && price > 0
                         ? `$${Number(price).toLocaleString()}`
-                        : <span className="prod-card__price--contact">Contact us for pricing</span>
+                        : <span className="prod-card__price--contact">Contact us</span>
                       }
                     </td>
                   </tr>

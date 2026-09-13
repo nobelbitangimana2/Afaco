@@ -3,44 +3,43 @@ import { NavLink, Link } from 'react-router-dom'
 import './NavBar.css'
 
 const NAV_LINKS = [
-  { to: '/',           label: 'Home'       },
-  { to: '/about',      label: 'About'      },
-  { to: '/activities', label: 'Activities' },
-  { to: '/products',   label: 'Products'   },
-  { to: '/gallery',    label: 'Gallery'    },
-  { to: '/news',       label: 'News'       },
-  { to: '/contact',    label: 'Contact'    },
+  { to: '/',           label: 'Home',       end: true },
+  { to: '/about',      label: 'About'               },
+  { to: '/products',   label: 'Products'            },
+  { to: '/activities', label: 'Activities'          },
+  { to: '/gallery',    label: 'Gallery'             },
+  { to: '/contact',    label: 'Contact'             },
 ]
 
 export default function NavBar() {
-  const [open, setOpen]       = useState(false)
+  const [open,     setOpen]     = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    const fn = () => setScrolled(window.scrollY > 8)
+    window.addEventListener('scroll', fn, { passive: true })
+    return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  // Close menu on route change (link click)
   const close = () => setOpen(false)
 
   return (
     <header className={`navbar${scrolled ? ' navbar--scrolled' : ''}`} role="banner">
-      <div className="navbar__inner">
+      <div className="navbar__inner container">
+
         {/* Logo */}
         <Link to="/" className="navbar__logo" onClick={close} aria-label="AFACO Home">
-          <span className="navbar__logo-icon" aria-hidden="true">🌿</span>
+          <span className="navbar__logo-leaf" aria-hidden="true">🌿</span>
           <span className="navbar__logo-text">AFACO</span>
         </Link>
 
-        {/* Desktop nav */}
+        {/* Desktop links */}
         <nav className="navbar__links" aria-label="Main navigation">
-          {NAV_LINKS.map(({ to, label }) => (
+          {NAV_LINKS.map(({ to, label, end }) => (
             <NavLink
               key={to}
               to={to}
-              end={to === '/'}
+              end={end}
               className={({ isActive }) =>
                 'navbar__link' + (isActive ? ' navbar__link--active' : '')
               }
@@ -50,22 +49,22 @@ export default function NavBar() {
           ))}
         </nav>
 
-        {/* CTA */}
-        <Link to="/contact" className="navbar__cta" onClick={close}>
-          Get in Touch
-        </Link>
+        {/* Desktop CTA */}
+        <div className="navbar__actions">
+          <Link to="/news" className="navbar__cta" onClick={close}>
+            Latest News
+          </Link>
+        </div>
 
         {/* Hamburger */}
         <button
           className={`navbar__hamburger${open ? ' navbar__hamburger--open' : ''}`}
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => setOpen(o => !o)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
           aria-controls="mobile-menu"
         >
-          <span />
-          <span />
-          <span />
+          <span /><span /><span />
         </button>
       </div>
 
@@ -76,11 +75,11 @@ export default function NavBar() {
         aria-label="Mobile navigation"
         aria-hidden={!open}
       >
-        {NAV_LINKS.map(({ to, label }) => (
+        {NAV_LINKS.map(({ to, label, end }) => (
           <NavLink
             key={to}
             to={to}
-            end={to === '/'}
+            end={end}
             className={({ isActive }) =>
               'navbar__mobile-link' + (isActive ? ' navbar__mobile-link--active' : '')
             }
@@ -89,8 +88,8 @@ export default function NavBar() {
             {label}
           </NavLink>
         ))}
-        <Link to="/contact" className="navbar__mobile-cta" onClick={close}>
-          Get in Touch
+        <Link to="/news" className="navbar__mobile-cta" onClick={close}>
+          Latest News
         </Link>
       </nav>
     </header>

@@ -1,269 +1,195 @@
 import React, { useEffect, useState } from 'react'
-import Section from '../components/Section'
 import Button  from '../components/Button'
 import { useData } from '../store/DataContext'
 import { getContactInfo, submitContactForm } from '../data/contact'
 import './Contact.css'
 
-const INITIAL = { name: '', email: '', message: '' }
+const INIT = { name: '', email: '', message: '' }
 
-function validate(fields) {
-  const errors = {}
-  if (!fields.name.trim())    errors.name    = 'Name is required.'
-  if (!fields.email.trim())   errors.email   = 'Email is required.'
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email))
-    errors.email = 'Please enter a valid email address.'
-  if (!fields.message.trim()) errors.message = 'Message is required.'
-  return errors
+function validate(f) {
+  const e = {}
+  if (!f.name.trim())    e.name    = 'Name is required.'
+  if (!f.email.trim())   e.email   = 'Email is required.'
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) e.email = 'Enter a valid email.'
+  if (!f.message.trim()) e.message = 'Message is required.'
+  return e
 }
 
 export default function Contact() {
   const { contact: liveContact } = useData()
   const [info,    setInfo]    = useState(null)
-  const [fields,  setFields]  = useState(INITIAL)
+  const [fields,  setFields]  = useState(INIT)
   const [errors,  setErrors]  = useState({})
-  const [status,  setStatus]  = useState('idle')
   const [touched, setTouched] = useState({})
+  const [status,  setStatus]  = useState('idle')
 
-  useEffect(() => {
-    getContactInfo(liveContact).then(setInfo)
-  }, [liveContact])
+  useEffect(() => { getContactInfo(liveContact).then(setInfo) }, [liveContact])
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target
-    setFields((f) => ({ ...f, [name]: value }))
-    // Clear error on edit
-    if (errors[name]) setErrors((err) => ({ ...err, [name]: '' }))
+    setFields(f => ({ ...f, [name]: value }))
+    if (errors[name]) setErrors(er => ({ ...er, [name]: '' }))
   }
+  const handleBlur = e => setTouched(t => ({ ...t, [e.target.name]: true }))
+  const fieldErr   = n => touched[n] && errors[n] ? errors[n] : ''
 
-  const handleBlur = (e) => {
-    setTouched((t) => ({ ...t, [e.target.name]: true }))
-  }
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault()
-    const allTouched = { name: true, email: true, message: true }
-    setTouched(allTouched)
+    setTouched({ name: true, email: true, message: true })
     const errs = validate(fields)
     if (Object.keys(errs).length) { setErrors(errs); return }
-
     setStatus('submitting')
     try {
       await submitContactForm(fields)
       setStatus('success')
-      setFields(INITIAL)
+      setFields(INIT)
       setTouched({})
       setErrors({})
     } catch (err) {
-      setStatus('error')
       console.error('Contact form error:', err.message)
+      setStatus('error')
     }
   }
 
-  const fieldError = (name) => (touched[name] && errors[name]) ? errors[name] : ''
-
   return (
     <div className="contact-page">
-      {/* Hero */}
-      <div className="page-hero page-hero--green">
+
+      <div className="page-hero">
         <div className="container page-hero__inner">
           <span className="page-hero__label">Contact</span>
           <h1 className="page-hero__title">Get in Touch</h1>
           <p className="page-hero__sub">
-            Whether you want to partner with us, support our work, or just learn more —
+            Whether you want to partner with us, place a bulk order, or just learn more —
             we'd love to hear from you.
           </p>
         </div>
       </div>
 
-      <Section id="contact">
-        <div className="contact__grid">
-          {/* Info panel */}
-          <div className="contact__info">
-            <h2 className="contact__info-heading">Contact Information</h2>
+      <section className="section section--white">
+        <div className="container contact__grid">
 
+          {/* Info */}
+          <div className="contact__info">
+            <h2 className="contact__heading">Contact Information</h2>
             {info && (
               <>
-                <div className="contact__info-items">
-                  <ContactInfoItem icon="📍" label="Address">
-                    {info.address}
-                  </ContactInfoItem>
-                  <ContactInfoItem icon="📞" label="Phone">
-                    <a href={`tel:${info.phone.replace(/\s/g,'')}`}>{info.phone}</a>
-                  </ContactInfoItem>
-                  <ContactInfoItem icon="✉️" label="Email">
-                    <a href={`mailto:${info.email}`}>{info.email}</a>
-                  </ContactInfoItem>
-                  <ContactInfoItem icon="🕐" label="Office Hours">
-                    {info.officeHours}
-                  </ContactInfoItem>
+                <div className="contact__items">
+                  {[
+                    { icon: '📍', label: 'Address',      value: info.address     },
+                    { icon: '📞', label: 'Phone',        value: info.phone,  href: `tel:${(info.phone||'').replace(/\s/g,'')}` },
+                    { icon: '✉️', label: 'Email',        value: info.email,  href: `mailto:${info.email}` },
+                    { icon: '🕐', label: 'Office Hours', value: info.officeHours },
+                  ].filter(x => x.value).map(({ icon, label, value, href }) => (
+                    <div key={label} className="contact__item">
+                      <span className="contact__item-icon" aria-hidden="true">{icon}</span>
+                      <div>
+                        <p className="contact__item-label">{label}</p>
+                        <div className="contact__item-value">
+                          {href ? <a href={href}>{value}</a> : value}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
-                {/* Social links */}
-                <div className="contact__social">
-                  <p className="contact__social-label">Follow us</p>
-                  <div className="contact__social-links">
-                    {Object.entries(info.socialLinks).map(([platform, url]) => (
-                      <a
-                        key={platform}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="contact__social-link"
-                        aria-label={platform.charAt(0).toUpperCase() + platform.slice(1)}
-                      >
-                        {platform.charAt(0).toUpperCase() + platform.slice(1)}
-                      </a>
-                    ))}
+                {info.socialLinks && (
+                  <div className="contact__social">
+                    <p className="contact__social-label">Follow us</p>
+                    <div className="contact__social-pills">
+                      {Object.entries(info.socialLinks).map(([p, url]) =>
+                        url ? (
+                          <a key={p} href={url} target="_blank" rel="noopener noreferrer"
+                            className="contact__social-pill">
+                            {p.charAt(0).toUpperCase() + p.slice(1)}
+                          </a>
+                        ) : null
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
               </>
             )}
 
-            {/* Map embed */}
-            <div className="contact__map" aria-label="Map showing AFACO location">
+            {/* Map */}
+            <div className="contact__map">
               <iframe
-                title="AFACO location map"
+                title="AFACO location"
                 src="https://www.openstreetmap.org/export/embed.html?bbox=29.27%2C0.13%2C29.30%2C0.16&layer=mapnik"
-                width="100%"
-                height="220"
+                width="100%" height="220"
                 style={{ border: 'none', borderRadius: 'var(--radius)' }}
                 loading="lazy"
-                aria-label="OpenStreetMap embed showing Butembo area"
               />
             </div>
           </div>
 
-          {/* Contact form */}
+          {/* Form */}
           <div className="contact__form-wrap">
-            <h2 className="contact__form-heading">Send a Message</h2>
+            <h2 className="contact__heading">Send a Message</h2>
 
             {status === 'success' ? (
               <div className="contact__success" role="alert">
                 <span className="contact__success-icon" aria-hidden="true">✅</span>
                 <h3>Message sent!</h3>
-                <p>
-                  Thank you for reaching out. A member of the AFACO team will get back
-                  to you within 2–3 business days.
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={() => setStatus('idle')}
-                  className="contact__success-btn"
-                >
+                <p>Thank you for reaching out. We'll get back to you within 2–3 business days.</p>
+                <Button variant="outline" onClick={() => setStatus('idle')}>
                   Send another message
                 </Button>
               </div>
             ) : (
-              <form
-                className="contact__form"
-                onSubmit={handleSubmit}
-                noValidate
-                aria-label="Contact form"
-              >
-                {/* Name */}
-                <div className={`form-field${fieldError('name') ? ' form-field--error' : ''}`}>
-                  <label htmlFor="name" className="form-label">
-                    Full Name <span aria-hidden="true">*</span>
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    className="form-input"
-                    value={fields.name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    autoComplete="name"
-                    aria-required="true"
-                    aria-describedby={fieldError('name') ? 'name-error' : undefined}
-                    placeholder="Your full name"
-                  />
-                  {fieldError('name') && (
-                    <p id="name-error" className="form-error" role="alert">{fieldError('name')}</p>
-                  )}
-                </div>
+              <form className="contact__form" onSubmit={handleSubmit} noValidate>
+                {[
+                  { id: 'name',    label: 'Full Name',      type: 'text',  autoComplete: 'name',  placeholder: 'Your full name'  },
+                  { id: 'email',   label: 'Email Address',  type: 'email', autoComplete: 'email', placeholder: 'you@example.com' },
+                ].map(({ id, label, type, autoComplete, placeholder }) => (
+                  <div key={id} className={`cform-field${fieldErr(id) ? ' cform-field--error' : ''}`}>
+                    <label htmlFor={id} className="cform-label">{label} <span aria-hidden="true">*</span></label>
+                    <input
+                      id={id} name={id} type={type}
+                      className="cform-input"
+                      value={fields[id]}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      autoComplete={autoComplete}
+                      placeholder={placeholder}
+                      aria-required="true"
+                      disabled={status === 'submitting'}
+                    />
+                    {fieldErr(id) && <p className="cform-error" role="alert">{fieldErr(id)}</p>}
+                  </div>
+                ))}
 
-                {/* Email */}
-                <div className={`form-field${fieldError('email') ? ' form-field--error' : ''}`}>
-                  <label htmlFor="email" className="form-label">
-                    Email Address <span aria-hidden="true">*</span>
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    className="form-input"
-                    value={fields.email}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    autoComplete="email"
-                    aria-required="true"
-                    aria-describedby={fieldError('email') ? 'email-error' : undefined}
-                    placeholder="you@example.com"
-                  />
-                  {fieldError('email') && (
-                    <p id="email-error" className="form-error" role="alert">{fieldError('email')}</p>
-                  )}
-                </div>
-
-                {/* Message */}
-                <div className={`form-field${fieldError('message') ? ' form-field--error' : ''}`}>
-                  <label htmlFor="message" className="form-label">
-                    Message <span aria-hidden="true">*</span>
-                  </label>
+                <div className={`cform-field${fieldErr('message') ? ' cform-field--error' : ''}`}>
+                  <label htmlFor="message" className="cform-label">Message <span aria-hidden="true">*</span></label>
                   <textarea
-                    id="message"
-                    name="message"
-                    className="form-input form-textarea"
+                    id="message" name="message"
+                    className="cform-input cform-textarea"
                     value={fields.message}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     rows={6}
-                    aria-required="true"
-                    aria-describedby={fieldError('message') ? 'message-error' : undefined}
                     placeholder="How can we help you?"
+                    aria-required="true"
+                    disabled={status === 'submitting'}
                   />
-                  {fieldError('message') && (
-                    <p id="message-error" className="form-error" role="alert">{fieldError('message')}</p>
-                  )}
+                  {fieldErr('message') && <p className="cform-error" role="alert">{fieldErr('message')}</p>}
                 </div>
 
                 {status === 'error' && (
-                  <p className="form-submit-error" role="alert">
+                  <p className="cform-submit-error" role="alert">
                     Something went wrong. Please try again.
                   </p>
                 )}
 
-                <Button
-                  type="submit"
-                  size="lg"
-                  fullWidth
-                  disabled={status === 'submitting'}
-                >
+                <Button type="submit" size="lg" fullWidth disabled={status === 'submitting'}>
                   {status === 'submitting' ? 'Sending…' : 'Send Message'}
                 </Button>
-
-                <p className="form-note">
-                  Fields marked <span aria-hidden="true">*</span> are required.
-                </p>
               </form>
             )}
           </div>
-        </div>
-      </Section>
-    </div>
-  )
-}
 
-function ContactInfoItem({ icon, label, children }) {
-  return (
-    <div className="cii">
-      <span className="cii__icon" aria-hidden="true">{icon}</span>
-      <div>
-        <p className="cii__label">{label}</p>
-        <div className="cii__value">{children}</div>
-      </div>
+        </div>
+      </section>
+
     </div>
   )
 }
