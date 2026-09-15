@@ -5,20 +5,59 @@ import UpdateCard from '../components/UpdateCard'
 import { useData } from '../store/DataContext'
 import './Home.css'
 
+/* ── Hero slides ── */
 const SLIDES = [
   { url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80', alt: 'AFACO rice fields at sunrise' },
-  { url: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1600&q=80', alt: 'Farmer working the fields' },
-  { url: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1600&q=80', alt: 'Harvest season' },
+  { url: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1600&q=80', alt: 'Farmer working in the field' },
+  { url: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1600&q=80', alt: 'Maize harvest season' },
 ]
 
-const SUSTAINABILITY = [
-  { icon: '💧', label: 'Water Management', desc: 'Solar-powered drip irrigation cuts water use by 40%.' },
-  { icon: '🌿', label: 'Organic Farming',  desc: 'Composting and crop rotation keep our soils fertile.' },
-  { icon: '👨‍🌾', label: 'Farmer Support',  desc: 'Quarterly training for 1,800+ cooperative members.' },
+/* ── Feature cards ── */
+const FEATURES = [
+  {
+    icon: '🌾',
+    color: '#d8f3dc',
+    title: 'Rice Production',
+    desc:  'We cultivate high-yield White and Parboiled Rice across North Kivu, using improved seed varieties and climate-smart techniques to maximise output every season.',
+    link:  '/products',
+    label: 'Our products',
+  },
+  {
+    icon: '👨‍🌾',
+    color: '#fef3c7',
+    title: 'Farmer Training',
+    desc:  'AFACO runs quarterly workshops on soil health, irrigation, crop rotation, and cooperative management — equipping farmers with tools to grow their businesses.',
+    link:  '/activities',
+    label: 'Our activities',
+  },
+  {
+    icon: '📦',
+    color: '#e0f2fe',
+    title: 'Packaging & Distribution',
+    desc:  'From 1 kg household bags to 100 kg institutional sacks, our produce reaches local markets, traders, and institutions across the region.',
+    link:  '/products',
+    label: 'View sizes',
+  },
+]
+
+/* ── Commitment values ── */
+const VALUES = [
+  { icon: '🌱', title: 'Sustainable Farming',  desc: 'Practices that protect land and water for the next generation.' },
+  { icon: '🤝', title: 'Farmer Support',        desc: 'Training, inputs, and market links that put farmers first.' },
+  { icon: '✅', title: 'Quality Assurance',     desc: 'Every batch is checked before it leaves our cooperative farms.' },
+  { icon: '⚖️', title: 'Fair Value Chains',    desc: 'We cut out middlemen so farmers earn more for their harvest.' },
+]
+
+/* ── Stats ── */
+const STATS = [
+  { value: '2,400+', label: 'Hectares farmed'   },
+  { value: '1,800+', label: 'Farmers supported' },
+  { value: '14',     label: 'Active projects'   },
+  { value: '8',      label: 'Districts reached' },
 ]
 
 export default function Home() {
-  const { updates, content, products } = useData()
+  const { updates, content } = useData()
   const [slide, setSlide] = useState(0)
 
   useEffect(() => {
@@ -26,207 +65,171 @@ export default function Home() {
     return () => clearInterval(id)
   }, [])
 
-  const latest        = [...updates].sort((a,b) => new Date(b.date)-new Date(a.date)).slice(0,3)
-  const featProducts  = products.slice(0, 2)
+  const latest = [...updates]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 3)
 
   return (
     <div className="home">
 
       {/* ══ HERO ══ */}
-      <section className="h-hero" aria-label="Hero">
+      <section className="hero" aria-label="Hero">
+        {/* Background slides */}
         {SLIDES.map((s, i) => (
           <div
             key={i}
-            className={`h-hero__bg${i === slide ? ' h-hero__bg--active' : ''}`}
+            className={`hero__bg${i === slide ? ' hero__bg--active' : ''}`}
             style={{ backgroundImage: `url(${s.url})` }}
             aria-hidden={i !== slide}
           />
         ))}
-        <div className="h-hero__overlay" />
+        <div className="hero__overlay" aria-hidden="true" />
 
-        <div className="h-hero__content container">
-          <p className="h-hero__eyebrow">Agricultural &amp; Farming Community Organisation</p>
-          <h1 className="h-hero__title">
-            <span className="h-hero__title--white">Nurturing</span><br />
-            <span className="h-hero__title--gold">AFACO's Harvest</span>
+        <div className="hero__content container">
+          <p className="hero__eyebrow">Agricultural &amp; Farming Community Organisation</p>
+          <h1 className="hero__title">
+            Growing Rice,<br />
+            Feeding Communities,<br />
+            Empowering Farmers
           </h1>
-          <p className="h-hero__sub">
-            We grow premium rice and support 1,800+ smallholder farmers across Burundi
-            through training, irrigation, and direct market access.
+          <p className="hero__sub">
+            AFACO cultivates high-quality rice and supports 1,800+ smallholder farmers across Central Africa
+            with training, infrastructure, and direct market access.
           </p>
-          <Button to="/products" size="lg">Explore our products</Button>
+          <div className="hero__actions">
+            <Button to="/products" size="lg">Our Products</Button>
+            <Button to="/about" size="lg" variant="outline-white">About AFACO</Button>
+          </div>
         </div>
 
-        <div className="h-hero__dots">
-          {SLIDES.map((_,i) => (
+        {/* Slide dots */}
+        <div className="hero__dots">
+          {SLIDES.map((_, i) => (
             <button
               key={i}
-              className={`h-hero__dot${i===slide?' h-hero__dot--active':''}`}
+              className={`hero__dot${i === slide ? ' hero__dot--active' : ''}`}
               onClick={() => setSlide(i)}
-              aria-label={`Slide ${i+1}`}
+              aria-label={`Slide ${i + 1}`}
             />
           ))}
         </div>
       </section>
 
-      {/* ══ ABOUT STRIP ══ */}
-      <section className="h-about section--panel">
-        <div className="container h-about__inner">
-          <div className="h-about__photo-wrap">
-            <img
-              src="https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?w=900&q=80"
-              alt="AFACO farmers"
-              className="h-about__photo"
-              loading="lazy"
-            />
-          </div>
-          <div className="h-about__text">
-            <span className="section__label">About AFACO</span>
-            <h2 className="h-about__title">Growing food.<br />Empowering lives.</h2>
-            <span className="gold-line gold-line--left" />
-            <p>{content.mission || 'Loading…'}</p>
-            <p>{content.vision  || ''}</p>
-            <Button to="/about" variant="outline" className="h-about__btn">
-              Our story
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ OUR PRODUCTS ══ */}
-      <section className="h-products section--base" aria-label="Our products">
+      {/* ══ FEATURE CARDS ══ */}
+      <section className="features section--white" aria-label="What we do">
         <div className="container">
-          <div className="section__header">
-            <span className="section__label">From our farms</span>
-            <h2 className="section__title">Our Products</h2>
-            <span className="gold-line" />
-          </div>
-
-          {featProducts.length === 0 ? (
-            <p style={{ textAlign:'center', color:'var(--text-muted)' }}>Loading products…</p>
-          ) : (
-            <div className="h-products__grid">
-              {featProducts.map(p => <ProductFeatureCard key={p.id} product={p} />)}
-            </div>
-          )}
-
-          <div style={{ textAlign:'center', marginTop:'2.5rem' }}>
-            <Button to="/products" variant="outline">View all products</Button>
+          <div className="features__grid">
+            {FEATURES.map(({ icon, color, title, desc, link, label }) => (
+              <div key={title} className="feat-card">
+                <div className="feat-card__icon" style={{ background: color }}>
+                  <span aria-hidden="true">{icon}</span>
+                </div>
+                <h3 className="feat-card__title">{title}</h3>
+                <p className="feat-card__desc">{desc}</p>
+                <Link to={link} className="feat-card__link">
+                  {label} →
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ══ SUSTAINABILITY ══ */}
-      <section className="h-sustain section--panel" aria-label="Sustainability">
-        <div className="container h-sustain__inner">
-          <div className="h-sustain__photo-wrap">
-            <img
-              src="https://images.unsplash.com/photo-1561543818-e3b20f6d7011?w=900&q=80"
-              alt="Irrigation system on AFACO farmland"
-              className="h-sustain__photo"
-              loading="lazy"
-            />
-          </div>
-          <div className="h-sustain__text">
-            <span className="section__label">Our Commitment</span>
-            <h2 className="h-sustain__title">Built on sustainable<br />farming principles</h2>
-            <span className="gold-line gold-line--left" />
-            <p className="h-sustain__body">
-              From solar-powered irrigation to composting programmes, AFACO embeds
-              sustainable practices at every step of our agricultural operations.
-            </p>
-          </div>
-        </div>
-
-        {/* Circular icon badges */}
-        <div className="container h-sustain__badges">
-          {SUSTAINABILITY.map(({ icon, label, desc }) => (
-            <div key={label} className="h-sustain__badge">
-              <div className="h-sustain__badge-icon" aria-hidden="true">{icon}</div>
-              <p className="h-sustain__badge-label">{label}</p>
-              <p className="h-sustain__badge-desc">{desc}</p>
+      {/* ══ STATS BAR ══ */}
+      <section className="stats-bar" aria-label="Key statistics">
+        <div className="container stats-bar__grid">
+          {STATS.map(({ value, label }) => (
+            <div key={label} className="stats-bar__item">
+              <span className="stats-bar__value">{value}</span>
+              <span className="stats-bar__label">{label}</span>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ══ COMMITMENT ══ */}
+      <section className="commitment section--cream" aria-label="Our commitment">
+        <div className="container">
+          <div className="commitment__top">
+            <div className="commitment__text">
+              <span className="section__label">Our Commitment</span>
+              <h2 className="section__title">Built on trust,<br />grown with purpose</h2>
+              <p className="commitment__intro">
+                Every decision AFACO makes starts with the farmer. We hold ourselves to four
+                principles that guide everything from seed selection to market partnerships.
+              </p>
+              <Button to="/about" variant="outline">Learn our story</Button>
+            </div>
+            <div className="commitment__photo-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?w=900&q=80"
+                alt="Women farmers working in the field"
+                className="commitment__photo"
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+          <div className="commitment__values">
+            {VALUES.map(({ icon, title, desc }) => (
+              <div key={title} className="val-item">
+                <span className="val-item__icon" aria-hidden="true">{icon}</span>
+                <div>
+                  <p className="val-item__title">{title}</p>
+                  <p className="val-item__desc">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ══ LATEST UPDATES ══ */}
-      <section className="h-news section--base" aria-label="Latest news">
+      <section className="updates-section section--green" aria-label="Latest updates">
         <div className="container">
-          <div className="h-news__header">
+          <div className="updates-section__header">
             <div>
               <span className="section__label">News &amp; Updates</span>
               <h2 className="section__title">From the field</h2>
             </div>
-            <Button to="/news" variant="outline" size="sm">All news</Button>
+            <Button to="/news" variant="outline-white" size="sm">View all news</Button>
           </div>
           <div className="grid-3">
             {latest.length === 0
-              ? <p style={{color:'var(--text-muted)',gridColumn:'1/-1',textAlign:'center',padding:'2rem 0'}}>Loading updates…</p>
+              ? <p className="updates-section__empty">Loading updates…</p>
               : latest.map(u => <UpdateCard key={u.id} {...u} dark />)
             }
           </div>
         </div>
       </section>
 
-      {/* ══ ACTIVITIES BANNER ══ */}
-      <section className="h-banner section--panel" aria-label="Activities">
-        <div className="h-banner__photo">
+      {/* ══ PRODUCT BANNER ══ */}
+      <section className="prod-banner" aria-label="Products banner">
+        <div className="prod-banner__photo">
           <img
             src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=900&q=80"
-            alt="Rice packaging at AFACO"
+            alt="Sacks of AFACO rice ready for distribution"
             loading="lazy"
           />
         </div>
-        <div className="h-banner__text">
-          <span className="section__label">From our fields to your table</span>
-          <h2 className="h-banner__title">
-            Premium rice.<br />
-            <span style={{ color:'var(--gold)' }}>Fair prices.</span>
+        <div className="prod-banner__text">
+          <span className="section__label" style={{ color: 'var(--green-light)' }}>
+            Fresh from our farms
+          </span>
+          <h2 className="prod-banner__title">
+            From our fields<br />to your table
           </h2>
-          <p className="h-banner__sub">
-            White Rice and Parboiled Rice available in 1 kg – 100 kg packaging for
-            households, traders, and institutions across the region.
+          <p className="prod-banner__sub">
+            White Rice and Parboiled Rice — available in 1 kg, 5 kg, 10 kg, 25 kg, 50 kg,
+            and 100 kg packaging for households, traders, and institutions.
           </p>
-          <div className="h-banner__actions">
+          <div className="prod-banner__actions">
             <Button to="/products" size="lg">Browse Products</Button>
-            <Button to="/contact" variant="outline" size="lg">Request a Quote</Button>
+            <Button to="/contact" variant="outline-white" size="lg">Request a Quote</Button>
           </div>
         </div>
       </section>
 
     </div>
-  )
-}
-
-/* ── Product feature card ── */
-function ProductFeatureCard({ product }) {
-  const { name, description, imageUrl, sizes = [] } = product
-  const displaySizes = sizes.map(s => s.size)
-
-  return (
-    <article className="h-prod-card">
-      <div className="h-prod-card__photo-wrap">
-        {imageUrl
-          ? <img src={imageUrl} alt={name} className="h-prod-card__photo" loading="lazy" />
-          : <div className="h-prod-card__photo-placeholder" aria-hidden="true">🌾</div>
-        }
-      </div>
-      <div className="h-prod-card__body">
-        <h3 className="h-prod-card__name">{name}</h3>
-        <span className="h-prod-card__underline" />
-        {description && <p className="h-prod-card__desc">{description}</p>}
-        {displaySizes.length > 0 && (
-          <div className="h-prod-card__sizes">
-            {displaySizes.map(s => (
-              <span key={s} className="h-prod-card__size">{s}</span>
-            ))}
-          </div>
-        )}
-        <Link to="/products" className="h-prod-card__link">
-          View details →
-        </Link>
-      </div>
-    </article>
   )
 }

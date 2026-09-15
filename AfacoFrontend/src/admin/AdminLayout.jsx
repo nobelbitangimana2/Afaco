@@ -36,7 +36,7 @@ export default function AdminLayout() {
             <span /><span /><span />
           </button>
           <Link to="/admin" className="adm-topbar__brand">
-            <img src="/AfacoLogo.jpeg" alt="AFACO logo" className="adm-topbar__brand-img" />
+            <span className="adm-topbar__brand-icon" aria-hidden="true">🌿</span>
             <span>AFACO <em>Admin</em></span>
           </Link>
         </div>

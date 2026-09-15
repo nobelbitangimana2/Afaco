@@ -25,12 +25,16 @@
   margin-bottom: 0.5rem;
 }
 
-.adm-login__brand-img {
+.adm-login__brand-icon {
+  font-size: 2.5rem;
+  display: block;
+  background: var(--green-light);
+  border-radius: 50%;
   width: 64px;
   height: 64px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .adm-login__title {

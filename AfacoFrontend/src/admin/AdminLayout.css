@@ -70,13 +70,7 @@
   font-weight: 600;
   margin-left: 2px;
 }
-.adm-topbar__brand-img {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
+.adm-topbar__brand-icon { font-size: 1.2rem; }
 
 /* Site link */
 .adm-topbar__site-link {

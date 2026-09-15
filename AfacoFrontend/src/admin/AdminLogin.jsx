@@ -43,7 +43,7 @@ export default function AdminLogin() {
       <div className="adm-login__card">
         {/* Brand mark */}
         <div className="adm-login__brand" aria-hidden="true">
-          <img src="/AfacoLogo.jpeg" alt="AFACO logo" className="adm-login__brand-img" />
+          <span className="adm-login__brand-icon">🌿</span>
         </div>
 
         <h1 className="adm-login__title">AFACO Admin</h1>

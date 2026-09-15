@@ -29,7 +29,7 @@ export default function NavBar() {
 
         {/* Logo */}
         <Link to="/" className="navbar__logo" onClick={close} aria-label="AFACO Home">
-          <img src="/AfacoLogo.jpeg" alt="AFACO logo" className="navbar__logo-img" />
+          <span className="navbar__logo-leaf" aria-hidden="true">🌿</span>
           <span className="navbar__logo-text">AFACO</span>
         </Link>
 

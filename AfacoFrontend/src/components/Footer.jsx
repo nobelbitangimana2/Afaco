@@ -36,11 +36,11 @@ export default function Footer() {
         {/* Brand col */}
         <div className="footer__brand">
           <Link to="/" className="footer__logo" aria-label="AFACO Home">
-            <img src="/AfacoLogo.jpeg" alt="AFACO logo" className="footer__logo-img" />
+            <span aria-hidden="true">🌿</span>
             <span>AFACO</span>
           </Link>
           <p className="footer__tagline">
-            Empowering smallholder farmers across Burundi through quality produce, training, and market access.
+            Empowering smallholder farmers across Central Africa through quality produce, training, and market access.
           </p>
           <div className="footer__social" aria-label="Social media links">
             {Object.entries(socialLinks).map(([platform, url]) =>

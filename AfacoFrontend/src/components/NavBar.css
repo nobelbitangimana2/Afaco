@@ -1,16 +1,17 @@
+/* ── NavBar — white bg, clean ── */
 .navbar {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  background: var(--bg);
+  background: var(--white);
   height: var(--nav-height);
   border-bottom: 1px solid transparent;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .navbar--scrolled {
-  border-bottom-color: var(--bg-border);
-  box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  border-bottom-color: var(--border);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
 }
 
 .navbar__inner {
@@ -20,30 +21,25 @@
   gap: 2rem;
 }
 
+/* Logo */
 .navbar__logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
   text-decoration: none;
   flex-shrink: 0;
 }
 
-.navbar__logo-img {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
+.navbar__logo-leaf { font-size: 1.35rem; line-height: 1; }
 
 .navbar__logo-text {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 900;
-  color: var(--text-head);
-  letter-spacing: 0.03em;
+  color: var(--green-dark);
+  letter-spacing: 0.02em;
 }
 
-/* Desktop links */
+/* Desktop nav */
 .navbar__links {
   display: none;
   align-items: center;
@@ -52,41 +48,42 @@
 }
 
 .navbar__link {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  color: var(--text-body);
-  padding: 0.4rem 0.9rem;
+  color: var(--text-light);
+  padding: 0.4rem 0.85rem;
   border-radius: var(--radius-pill);
   text-decoration: none;
   transition: color 0.15s, background 0.15s;
 }
 
 .navbar__link:hover {
-  color: var(--text-head);
-  background: var(--bg-panel);
+  color: var(--green);
+  background: var(--green-light);
 }
 
 .navbar__link--active {
-  color: var(--gold);
+  color: var(--green-dark);
   font-weight: 700;
+  background: var(--green-light);
 }
 
-/* CTA */
+/* CTA pill */
 .navbar__actions { display: none; flex-shrink: 0; }
 
 .navbar__cta {
-  background: var(--gold);
-  color: var(--bg);
+  background: var(--green);
+  color: var(--white);
   font-size: 0.85rem;
-  font-weight: 700;
-  padding: 0.5rem 1.3rem;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
   border-radius: var(--radius-pill);
   text-decoration: none;
   transition: background 0.15s;
   white-space: nowrap;
 }
 
-.navbar__cta:hover { background: var(--gold-light); }
+.navbar__cta:hover { background: var(--green-mid); }
 
 /* Hamburger */
 .navbar__hamburger {
@@ -105,7 +102,7 @@
   display: block;
   width: 22px;
   height: 2px;
-  background: var(--text-body);
+  background: var(--text);
   border-radius: 2px;
   transition: transform 0.25s, opacity 0.25s;
   transform-origin: center;
@@ -119,44 +116,47 @@
 .navbar__mobile {
   display: flex;
   flex-direction: column;
-  background: var(--bg-panel);
-  border-top: 1px solid var(--bg-border);
+  background: var(--white);
+  border-top: 1px solid var(--border);
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
 }
 
-.navbar__mobile--open { max-height: 440px; }
+.navbar__mobile--open { max-height: 420px; }
 
 .navbar__mobile-link {
-  color: var(--text-body);
+  color: var(--text-light);
   font-size: 1rem;
   font-weight: 500;
   padding: 0.9rem 1.5rem;
-  border-bottom: 1px solid var(--bg-border);
+  border-bottom: 1px solid var(--border);
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
 }
 
-.navbar__mobile-link:hover { background: var(--bg-card); color: var(--text-head); }
-.navbar__mobile-link--active { color: var(--gold); }
+.navbar__mobile-link:hover,
+.navbar__mobile-link--active {
+  background: var(--green-light);
+  color: var(--green-dark);
+}
 
 .navbar__mobile-cta {
   margin: 1rem 1.5rem 1.25rem;
   text-align: center;
-  background: var(--gold);
-  color: var(--bg);
-  font-weight: 700;
-  padding: 0.8rem;
+  background: var(--green);
+  color: var(--white);
+  font-weight: 600;
+  padding: 0.75rem;
   border-radius: var(--radius-pill);
   text-decoration: none;
   transition: background 0.15s;
 }
 
-.navbar__mobile-cta:hover { background: var(--gold-light); }
+.navbar__mobile-cta:hover { background: var(--green-mid); }
 
 @media (min-width: 900px) {
-  .navbar__links   { display: flex; }
+  .navbar__links  { display: flex; }
   .navbar__actions { display: flex; }
   .navbar__hamburger { display: none; }
   .navbar__mobile    { display: none !important; }
