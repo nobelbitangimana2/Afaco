@@ -22,6 +22,7 @@ import AdminUpdates     from './admin/AdminUpdates'
 import AdminProducts    from './admin/AdminProducts'
 import AdminContent     from './admin/AdminContent'
 import AdminContactInfo from './admin/AdminContactInfo'
+import AdminTeam        from './admin/AdminTeam'
 
 // ── Public wrapper ─────────────────────────────────────────────────────────
 import Products     from './pages/Products'
@@ -69,6 +70,7 @@ export default function App() {
         <Route path="products" element={<AdminProducts />}    />
         <Route path="content"  element={<AdminContent />}     />
         <Route path="contact"  element={<AdminContactInfo />} />
+        <Route path="team"     element={<AdminTeam />}        />
       </Route>
 
       {/* ── Public site (catches everything else) ── */}

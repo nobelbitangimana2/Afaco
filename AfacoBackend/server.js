@@ -12,6 +12,7 @@ const updatesRoutes  = require('./routes/updates')
 const contentRoutes  = require('./routes/content')
 const contactRoutes  = require('./routes/contact')
 const productsRoutes = require('./routes/products')
+const teamRoutes     = require('./routes/team')
 
 const app  = express()
 const PORT = process.env.PORT || 5000
@@ -52,6 +53,7 @@ app.use('/api',         updatesRoutes)  // GET /api/updates + /api/admin/updates
 app.use('/api',         contentRoutes)  // GET /api/content + /api/admin/content
 app.use('/api',         contactRoutes)  // GET /api/contact + /api/admin/contact
 app.use('/api',         productsRoutes) // GET /api/products + /api/admin/products
+app.use('/api',         teamRoutes)     // GET /api/team + /api/admin/team
 
 // ── Health check ───────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))

@@ -22,6 +22,7 @@ const Update      = require('../models/Update')
 const Product     = require('../models/Product')
 const SiteContent = require('../models/SiteContent')
 const Contact     = require('../models/Contact')
+const TeamMember  = require('../models/TeamMember')
 
 async function seed() {
   await mongoose.connect(process.env.MONGO_URI)
@@ -44,12 +45,12 @@ async function seed() {
       mission: 'To empower smallholder farmers across Central Africa with the knowledge, tools, infrastructure, and market connections they need to build sustainable livelihoods, strengthen local food systems, and contribute to long-term regional food security.',
       vision:  'A Central Africa where every farming community — regardless of geography, gender, or economic status — has equitable access to quality inputs, modern techniques, fair markets, and the social infrastructure needed to thrive.',
       partners: [
-        { name: 'Great Lakes Regional Seed Bank', description: 'Regional seed research and distribution partner.', imageUrl: '' },
-        { name: 'Ministry of Agriculture – DRC', description: 'Public-sector partner supporting agricultural development.', imageUrl: '' },
-        { name: 'FAO Central Africa', description: 'Supporting food security and sustainable agriculture programmes.', imageUrl: '' },
-        { name: 'International Fund for Agricultural Development', description: 'Investing in rural communities and smallholder farmers.', imageUrl: '' },
-        { name: "Local Farmers' Cooperative Union", description: 'A community-led network connecting farmers across the region.', imageUrl: '' },
-        { name: 'Regional Agricultural University Network', description: 'Knowledge and research partner for modern farming practices.', imageUrl: '' },
+        'Great Lakes Regional Seed Bank',
+        'Ministry of Agriculture – DRC',
+        'FAO Central Africa',
+        'International Fund for Agricultural Development',
+        "Local Farmers' Cooperative Union",
+        'Regional Agricultural University Network',
       ],
     })
     console.log('✓ Site content seeded')
@@ -77,6 +78,22 @@ async function seed() {
     console.log('✓ Contact info seeded')
   } else {
     console.log('– Contact info already exists, skipping')
+  }
+
+  // ── Team members ───────────────────────────────────────────────────────────
+  const teamCount = await TeamMember.countDocuments()
+  if (teamCount === 0) {
+    await TeamMember.insertMany([
+      { name: 'Jean-Pierre Mutombo', role: 'Executive Director', bio: 'Over 20 years of experience in agricultural development and rural enterprise management across Central Africa.', photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', order: 0 },
+      { name: 'Amina Ndeze', role: 'Head of Agronomy', bio: 'PhD in Crop Science with expertise in climate-smart agriculture and sustainable soil management.', photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80', order: 1 },
+      { name: 'Emmanuel Bahati', role: 'Partnerships & Funding Manager', bio: 'Connects AFACO with regional and international partners, donors, and government agencies.', photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80', order: 2 },
+      { name: 'Grace Kavira', role: 'Women in Agriculture Lead', bio: 'Dedicated to empowering women farmers through land rights advocacy and entrepreneurship programmes.', photoUrl: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&q=80', order: 3 },
+      { name: 'Patrick Lukusa', role: 'Infrastructure Engineer', bio: 'Designs and oversees irrigation systems, storage facilities, and farm access road projects.', photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80', order: 4 },
+      { name: 'Solange Maheshe', role: 'Community Outreach Coordinator', bio: 'Bridges AFACO programmes with local communities, cooperatives, and youth groups.', photoUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80', order: 5 },
+    ])
+    console.log('✓ Team members seeded (6 records)')
+  } else {
+    console.log(`– Team members already exist (${teamCount} records), skipping`)
   }
 
   // ── Sample updates ─────────────────────────────────────────────────────────

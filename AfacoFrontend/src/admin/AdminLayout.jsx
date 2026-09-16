@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: '/admin/products', label: 'Products',  icon: '🌾'            },
   { to: '/admin/content',  label: 'Content & Partners', icon: '✏️'     },
   { to: '/admin/contact',  label: 'Contact',   icon: '📋'            },
+  { to: '/admin/team',     label: 'Team',      icon: '👥'            },
 ]
 
 export default function AdminLayout() {

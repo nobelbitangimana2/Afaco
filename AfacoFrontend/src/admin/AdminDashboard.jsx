@@ -9,11 +9,12 @@ const QUICK_LINKS = [
   { to: '/admin/updates', icon: '📰',  label: 'Updates',        desc: 'Create, edit and delete news updates'    },
   { to: '/admin/content', icon: '✏️',  label: 'Site Content',   desc: 'Edit mission and vision text'            },
   { to: '/admin/contact', icon: '📋',  label: 'Contact Info',   desc: 'Update address, phone and social links'  },
+  { to: '/admin/team',    icon: '👥',  label: 'Team Members',   desc: 'Add, edit and remove team members'        },
 ]
 
 export default function AdminDashboard() {
   const { user }                        = useAuth()
-  const { images, updates, content, contact } = useData()
+  const { images, updates, team, content, contact } = useData()
 
   const today = new Date().toLocaleDateString('en-GB', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
@@ -49,6 +50,7 @@ export default function AdminDashboard() {
           { value: images.length,  label: 'Images',         to: '/admin/media'   },
           { value: updates.length, label: 'News updates',   to: '/admin/updates' },
           { value: Object.keys(contact.socialLinks ?? {}).length, label: 'Social links', to: '/admin/contact' },
+          { value: team.length,     label: 'Team members',  to: '/admin/team'    },
           { value: 1,              label: 'Active content', to: '/admin/content' },
         ].map(({ value, label, to }) => (
           <Link key={label} to={to} className="adm-dash__stat-card">

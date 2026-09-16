@@ -6,25 +6,11 @@ const requireAuth  = require('../middleware/auth')
 
 const router = express.Router()
 
-function normalizePartner(partner) {
-  if (typeof partner === 'string') {
-    return { name: partner.trim(), description: '', imageUrl: '' }
-  }
-  return {
-    name: typeof partner?.name === 'string' ? partner.name.trim() : '',
-    description: typeof partner?.description === 'string' ? partner.description.trim() : '',
-    imageUrl: typeof partner?.imageUrl === 'string' ? partner.imageUrl.trim() : '',
-  }
-}
-
 /** GET /api/content — public */
 router.get('/content', async (req, res, next) => {
   try {
     const content = await SiteContent.findOne()
-    if (!content) return res.json({ mission: '', vision: '', partners: [] })
-    const response = content.toJSON()
-    response.partners = (content.partners || []).map(normalizePartner).filter((partner) => partner.name)
-    res.json(response)
+    res.json(content || { mission: '', vision: '', partners: [] })
   } catch (err) {
     next(err)
   }
@@ -41,8 +27,9 @@ router.put('/admin/content', requireAuth, async (req, res, next) => {
       return res.status(400).json({ error: 'Partners must be provided as a list.' })
     }
     const cleanedPartners = partners
-      .map(normalizePartner)
-      .filter((partner) => partner.name)
+      .filter((partner) => typeof partner === 'string')
+      .map((partner) => partner.trim())
+      .filter(Boolean)
     const content = await SiteContent.findOneAndUpdate(
       {},
       { mission, vision, partners: cleanedPartners },

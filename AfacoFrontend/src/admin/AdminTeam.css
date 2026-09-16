@@ -1,0 +1,79 @@
+.adm-team__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .adm-team__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1100px) {
+  .adm-team__grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.adm-team__card { overflow: hidden; }
+
+.adm-team__photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.adm-team__photo--empty,
+.adm-team__preview--empty {
+  background: var(--green-light);
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+.adm-team__info { padding: 1.1rem; }
+.adm-team__info h2 { font-size: 1rem; margin-bottom: 0.25rem; }
+.adm-team__role {
+  color: var(--green);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.adm-team__bio {
+  color: var(--text-light);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  margin-top: 0.65rem;
+}
+.adm-team__actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.adm-team__empty { color: var(--muted); padding: 1.5rem; text-align: center; }
+
+.adm-team__form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (min-width: 800px) {
+  .adm-team__form-grid { grid-template-columns: 1fr 300px; }
+}
+
+.adm-team__photo-title {
+  color: var(--text);
+  font-size: 0.82rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.adm-team__preview {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  object-fit: cover;
+}
+
+.adm-team__file-input { display: none; }
+.adm-team__hint { color: var(--muted); font-size: 0.75rem; line-height: 1.5; }
+.adm-team__save { margin-top: 0.25rem; }

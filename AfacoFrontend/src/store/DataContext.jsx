@@ -12,25 +12,6 @@ import api from '../services/api'
 
 const DataContext = createContext(null)
 
-function normalizePartner(partner) {
-  if (typeof partner === 'string') {
-    return { name: partner, description: '', imageUrl: '' }
-  }
-  return {
-    name: partner?.name || '',
-    description: partner?.description || '',
-    imageUrl: partner?.imageUrl || '',
-  }
-}
-
-function normalizeContent(value) {
-  return {
-    ...DEFAULT_CONTENT,
-    ...(value || {}),
-    partners: (value?.partners || []).map(normalizePartner).filter((partner) => partner.name),
-  }
-}
-
 // ── Fallback defaults (shown while loading or if API unreachable) ─────────────
 const DEFAULT_CONTENT = { mission: '', vision: '', partners: [] }
 const DEFAULT_CONTACT = {
@@ -43,23 +24,26 @@ export function DataProvider({ children }) {
   const [images,   setImages]   = useState([])
   const [updates,  setUpdates]  = useState([])
   const [products, setProducts] = useState([])
+  const [team,     setTeam]     = useState([])
   const [content,  setContent]  = useState(DEFAULT_CONTENT)
   const [contact,  setContact]  = useState(DEFAULT_CONTACT)
 
   // ── Initial load ─────────────────────────────────────────────────────────────
   const fetchAll = useCallback(async () => {
     try {
-      const [imgsRes, updsRes, prodsRes, contRes, ctctRes] = await Promise.allSettled([
+      const [imgsRes, updsRes, prodsRes, teamRes, contRes, ctctRes] = await Promise.allSettled([
         api.get('/api/media'),
         api.get('/api/updates'),
         api.get('/api/products'),
+        api.get('/api/team'),
         api.get('/api/content'),
         api.get('/api/contact'),
       ])
       if (imgsRes.status  === 'fulfilled') setImages(imgsRes.value.data)
       if (updsRes.status  === 'fulfilled') setUpdates(updsRes.value.data)
       if (prodsRes.status === 'fulfilled') setProducts(prodsRes.value.data)
-      if (contRes.status  === 'fulfilled') setContent(normalizeContent(contRes.value.data))
+      if (teamRes.status  === 'fulfilled') setTeam(teamRes.value.data)
+      if (contRes.status  === 'fulfilled') setContent(contRes.value.data || DEFAULT_CONTENT)
       if (ctctRes.status  === 'fulfilled') setContact(ctctRes.value.data || DEFAULT_CONTACT)
     } catch (err) {
       console.error('DataContext initial load error:', err)
@@ -135,9 +119,8 @@ export function DataProvider({ children }) {
 
   async function saveContent(patch) {
     const res = await api.put('/api/admin/content', patch)
-    const nextContent = normalizeContent(res.data)
-    setContent(nextContent)
-    return nextContent
+    setContent(res.data)
+    return res.data
   }
 
   // ── Contact actions ───────────────────────────────────────────────────────────
@@ -167,16 +150,37 @@ export function DataProvider({ children }) {
     setProducts((prev) => prev.filter((p) => p.id !== id))
   }
 
+  // ── Team actions ─────────────────────────────────────────────────────────────
+
+  async function addTeamMember(data) {
+    const res = await api.post('/api/admin/team', data)
+    setTeam((prev) => [...prev, res.data])
+    return res.data
+  }
+
+  async function editTeamMember(id, data) {
+    const res = await api.put(`/api/admin/team/${id}`, data)
+    setTeam((prev) => prev.map((member) => (member.id === id ? res.data : member)))
+    return res.data
+  }
+
+  async function deleteTeamMember(id) {
+    await api.delete(`/api/admin/team/${id}`)
+    setTeam((prev) => prev.filter((member) => member.id !== id))
+  }
+
   return (
     <DataContext.Provider value={{
       // State
-      images, updates, products, content, contact,
+      images, updates, products, team, content, contact,
       // Image actions
       addImage, deleteImage, updateImage, reorderImages,
       // Update actions
       addUpdate, editUpdate, deleteUpdate,
       // Product actions
       addProduct, editProduct, deleteProduct,
+      // Team actions
+      addTeamMember, editTeamMember, deleteTeamMember,
       // Content actions
       saveContent,
       // Contact actions
