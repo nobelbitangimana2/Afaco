@@ -8,6 +8,8 @@ const teamMemberSchema = new mongoose.Schema(
     role:     { type: String, required: true, trim: true },
     bio:      { type: String, default: '', trim: true },
     photoUrl: { type: String, default: '' },
+    imagekitFileId:      { type: String, default: '' },
+    imagekitThumbFileId: { type: String, default: '' },
     order:    { type: Number, default: 0 },
   },
   { timestamps: true }

@@ -67,6 +67,15 @@ export function DataProvider({ children }) {
     return res.data
   }
 
+  async function uploadTeamPhoto(file) {
+    const fd = new FormData()
+    fd.append('image', file)
+    const res = await api.post('/api/admin/team/upload', fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return res.data
+  }
+
   async function deleteImage(id) {
     await api.delete(`/api/admin/media/${id}`)
     setImages((prev) => prev.filter((img) => img.id !== id))
@@ -175,6 +184,7 @@ export function DataProvider({ children }) {
       images, updates, products, team, content, contact,
       // Image actions
       addImage, deleteImage, updateImage, reorderImages,
+      uploadTeamPhoto,
       // Update actions
       addUpdate, editUpdate, deleteUpdate,
       // Product actions

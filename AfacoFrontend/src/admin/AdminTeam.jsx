@@ -2,7 +2,9 @@ import React, { useRef, useState } from 'react'
 import { useData } from '../store/DataContext'
 import './AdminTeam.css'
 
-const EMPTY_FORM = { name: '', role: '', bio: '', photoUrl: '' }
+const EMPTY_FORM = {
+  name: '', role: '', bio: '', photoUrl: '', imagekitFileId: '', imagekitThumbFileId: '',
+}
 
 function ConfirmDialog({ onConfirm, onCancel }) {
   return (
@@ -20,7 +22,7 @@ function ConfirmDialog({ onConfirm, onCancel }) {
 }
 
 export default function AdminTeam() {
-  const { team, addImage, addTeamMember, editTeamMember, deleteTeamMember } = useData()
+  const { team, uploadTeamPhoto, addTeamMember, editTeamMember, deleteTeamMember } = useData()
   const [view, setView] = useState('list')
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(EMPTY_FORM)
@@ -49,6 +51,8 @@ export default function AdminTeam() {
       role: member.role,
       bio: member.bio || '',
       photoUrl: member.photoUrl || '',
+      imagekitFileId: member.imagekitFileId || '',
+      imagekitThumbFileId: member.imagekitThumbFileId || '',
     })
     setErrors({})
     setEditingId(member.id)
@@ -66,8 +70,13 @@ export default function AdminTeam() {
     if (!file) return
     setUploading(true)
     try {
-      const image = await addImage(file, 'team', form.name || 'Team member')
-      setForm((current) => ({ ...current, photoUrl: image.url }))
+      const image = await uploadTeamPhoto(file)
+      setForm((current) => ({
+        ...current,
+        photoUrl: image.photoUrl,
+        imagekitFileId: image.imagekitFileId,
+        imagekitThumbFileId: image.imagekitThumbFileId,
+      }))
       showToast('success', 'Photo uploaded. Save the member to publish it.')
     } catch (err) {
       showToast('error', err.message)
@@ -93,6 +102,8 @@ export default function AdminTeam() {
         role: form.role.trim(),
         bio: form.bio.trim(),
         photoUrl: form.photoUrl,
+        imagekitFileId: form.imagekitFileId || '',
+        imagekitThumbFileId: form.imagekitThumbFileId || '',
       }
       if (editingId) {
         await editTeamMember(editingId, payload)
