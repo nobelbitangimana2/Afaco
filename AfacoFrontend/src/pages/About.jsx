@@ -130,9 +130,22 @@ export default function About() {
             <p className="section__subtitle">AFACO collaborates with regional and international organisations.</p>
           </div>
           <div className="about__partners">
-            {(content.partners || []).map(p => (
-              <div key={p} className="about__partner-badge">{p}</div>
-            ))}
+            {(content.partners || []).map((partner) => {
+              const item = typeof partner === 'string'
+                ? { name: partner, description: '', imageUrl: '' }
+                : partner
+              return (
+                <article key={item.name} className="about__partner-card">
+                  {item.imageUrl && (
+                    <img src={item.imageUrl} alt="" className="about__partner-image" loading="lazy" />
+                  )}
+                  <div>
+                    <h3 className="about__partner-name">{item.name}</h3>
+                    {item.description && <p className="about__partner-description">{item.description}</p>}
+                  </div>
+                </article>
+              )
+            })}
           </div>
           <div className="text-center mt-3">
             <Button to="/contact">Become a Partner</Button>

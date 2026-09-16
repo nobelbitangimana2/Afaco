@@ -2,20 +2,21 @@
 
 const mongoose = require('mongoose')
 
-// Single-document collection — one record holds all editable site text
+// Single-document collection — one record holds all editable site text.
+// Mixed keeps old string-only partner records readable during migration.
 const siteContentSchema = new mongoose.Schema(
   {
     mission: { type: String, default: '' },
     vision:  { type: String, default: '' },
     partners: {
-      type: [String],
+      type: [mongoose.Schema.Types.Mixed],
       default: [
-        'Great Lakes Regional Seed Bank',
-        'Ministry of Agriculture – DRC',
-        'FAO Central Africa',
-        'International Fund for Agricultural Development',
-        "Local Farmers' Cooperative Union",
-        'Regional Agricultural University Network',
+        { name: 'Great Lakes Regional Seed Bank', description: '', imageUrl: '' },
+        { name: 'Ministry of Agriculture – DRC', description: '', imageUrl: '' },
+        { name: 'FAO Central Africa', description: '', imageUrl: '' },
+        { name: 'International Fund for Agricultural Development', description: '', imageUrl: '' },
+        { name: "Local Farmers' Cooperative Union", description: '', imageUrl: '' },
+        { name: 'Regional Agricultural University Network', description: '', imageUrl: '' },
       ],
     },
   },

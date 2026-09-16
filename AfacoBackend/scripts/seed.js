@@ -44,12 +44,12 @@ async function seed() {
       mission: 'To empower smallholder farmers across Central Africa with the knowledge, tools, infrastructure, and market connections they need to build sustainable livelihoods, strengthen local food systems, and contribute to long-term regional food security.',
       vision:  'A Central Africa where every farming community — regardless of geography, gender, or economic status — has equitable access to quality inputs, modern techniques, fair markets, and the social infrastructure needed to thrive.',
       partners: [
-        'Great Lakes Regional Seed Bank',
-        'Ministry of Agriculture – DRC',
-        'FAO Central Africa',
-        'International Fund for Agricultural Development',
-        "Local Farmers' Cooperative Union",
-        'Regional Agricultural University Network',
+        { name: 'Great Lakes Regional Seed Bank', description: 'Regional seed research and distribution partner.', imageUrl: '' },
+        { name: 'Ministry of Agriculture – DRC', description: 'Public-sector partner supporting agricultural development.', imageUrl: '' },
+        { name: 'FAO Central Africa', description: 'Supporting food security and sustainable agriculture programmes.', imageUrl: '' },
+        { name: 'International Fund for Agricultural Development', description: 'Investing in rural communities and smallholder farmers.', imageUrl: '' },
+        { name: "Local Farmers' Cooperative Union", description: 'A community-led network connecting farmers across the region.', imageUrl: '' },
+        { name: 'Regional Agricultural University Network', description: 'Knowledge and research partner for modern farming practices.', imageUrl: '' },
       ],
     })
     console.log('✓ Site content seeded')
