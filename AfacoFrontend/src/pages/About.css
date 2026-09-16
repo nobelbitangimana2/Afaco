@@ -11,8 +11,8 @@
 .about__mv-card {
   position: relative;
   overflow: hidden;
-  background: #eef8f0;
-  border: 1px solid #cfe8d4;
+  background: #c9e8d2;
+  border: 1px solid #a6d3b3;
   border-top: 4px solid var(--green-mid);
   border-radius: var(--radius);
   padding: 2.25rem;
@@ -23,8 +23,8 @@
 }
 
 .about__mv-card:nth-child(2) {
-  background: #e7f4eb;
-  border-color: #c5e2cc;
+  background: #b9ddc4;
+  border-color: #93c7a2;
   border-top-color: var(--green);
   box-shadow: 0 10px 24px rgba(45, 106, 79, 0.08);
 }
