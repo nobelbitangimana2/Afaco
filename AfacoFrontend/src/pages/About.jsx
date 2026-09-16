@@ -32,7 +32,7 @@ export default function About() {
       </div>
 
       {/* Mission & Vision */}
-      <section className="section section--green about__mv-section">
+      <section className="section section--cream about__mv-section">
         <div className="container">
           <div className="about__mv-grid">
             <div className="about__mv-card">

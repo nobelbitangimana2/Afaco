@@ -21,7 +21,7 @@ export default function Products() {
         </div>
       </div>
 
-      <section className="section section--white">
+      <section className="section section--cream">
         <div className="container">
           {products.length === 0 ? (
             <p className="products__loading">Loading products…</p>
