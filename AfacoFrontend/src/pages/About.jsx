@@ -14,15 +14,6 @@ const TIMELINE = [
   { year: '2026', text: 'Expanding the high-yield rice programme to three new districts with regional seed bank support.' },
 ]
 
-const PARTNERS = [
-  'Great Lakes Regional Seed Bank',
-  'Ministry of Agriculture – DRC',
-  'FAO Central Africa',
-  'International Fund for Agricultural Development',
-  'Local Farmers\' Cooperative Union',
-  'Regional Agricultural University Network',
-]
-
 export default function About() {
   const { content } = useData()
   const [team, setTeam] = useState([])
@@ -139,7 +130,7 @@ export default function About() {
             <p className="section__subtitle">AFACO collaborates with regional and international organisations.</p>
           </div>
           <div className="about__partners">
-            {PARTNERS.map(p => (
+            {(content.partners || []).map(p => (
               <div key={p} className="about__partner-badge">{p}</div>
             ))}
           </div>

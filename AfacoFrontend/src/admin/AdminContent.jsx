@@ -7,6 +7,7 @@ export default function AdminContent() {
 
   const [mission, setMission] = useState(content.mission)
   const [vision,  setVision]  = useState(content.vision)
+  const [partners, setPartners] = useState(content.partners || [])
   const [errors,  setErrors]  = useState({})
   const [toast,   setToast]   = useState(null)
   const [dirty,   setDirty]   = useState(false)
@@ -15,8 +16,9 @@ export default function AdminContent() {
   useEffect(() => {
     setMission(content.mission)
     setVision(content.vision)
+    setPartners(content.partners || [])
     setDirty(false)
-  }, [content.mission, content.vision])
+  }, [content.mission, content.vision, content.partners])
 
   function handleChange(field, value) {
     if (field === 'mission') { setMission(value) }
@@ -29,13 +31,14 @@ export default function AdminContent() {
     const e = {}
     if (!mission.trim()) e.mission = 'Mission text is required.'
     if (!vision.trim())  e.vision  = 'Vision text is required.'
+    if (partners.some((partner) => !partner.trim())) e.partners = 'Partner names cannot be empty.'
     return e
   }
 
   function handleSave() {
     const errs = validate()
     if (Object.keys(errs).length) { setErrors(errs); return }
-    saveContent({ mission, vision })
+    saveContent({ mission, vision, partners: partners.map((partner) => partner.trim()) })
       .then(() => {
         setDirty(false)
         setToast({ type: 'success', msg: 'Mission & Vision saved. Changes are live on the public site.' })
@@ -50,8 +53,25 @@ export default function AdminContent() {
   function handleReset() {
     setMission(content.mission)
     setVision(content.vision)
+    setPartners(content.partners || [])
     setErrors({})
     setDirty(false)
+  }
+
+  function updatePartner(index, value) {
+    setPartners((current) => current.map((partner, i) => i === index ? value : partner))
+    setDirty(true)
+    if (errors.partners) setErrors((current) => ({ ...current, partners: '' }))
+  }
+
+  function addPartner() {
+    setPartners((current) => [...current, ''])
+    setDirty(true)
+  }
+
+  function removePartner(index) {
+    setPartners((current) => current.filter((_, i) => i !== index))
+    setDirty(true)
   }
 
   return (
@@ -149,6 +169,46 @@ export default function AdminContent() {
         </div>
       </div>
 
+      <div className="adm-card adm-form adm-content__partners">
+        <div className="adm-content__field-header">
+          <span className="adm-content__icon" aria-hidden="true">🤝</span>
+          <div>
+            <h2 className="adm-content__field-title">Partners</h2>
+            <p className="adm-content__field-hint">
+              Add and manage the organisations shown in the Our Partners section on the About page.
+            </p>
+          </div>
+          <button type="button" className="adm-btn adm-btn--ghost adm-content__add-partner" onClick={addPartner}>
+            + Add partner
+          </button>
+        </div>
+
+        <div className="adm-content__partners-list">
+          {partners.map((partner, index) => (
+            <div key={index} className={`adm-content__partner-row${errors.partners ? ' adm-field--err' : ''}`}>
+              <label htmlFor={`content-partner-${index}`} className="adm-sr-only">Partner {index + 1}</label>
+              <input
+                id={`content-partner-${index}`}
+                className="adm-input"
+                value={partner}
+                onChange={(event) => updatePartner(index, event.target.value)}
+                placeholder="Partner organisation name"
+              />
+              <button
+                type="button"
+                className="adm-btn adm-btn--danger adm-content__remove-partner"
+                onClick={() => removePartner(index)}
+                aria-label={`Remove partner ${index + 1}`}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          {!partners.length && <p className="adm-content__empty">No partners added yet.</p>}
+        </div>
+        {errors.partners && <p className="adm-field-error">{errors.partners}</p>}
+      </div>
+
       {/* Live preview */}
       <div className="adm-card adm-content__preview">
         <h3 className="adm-content__preview-title">Live preview</h3>
@@ -160,6 +220,10 @@ export default function AdminContent() {
           <div className="adm-content__preview-block">
             <span className="adm-content__preview-label">Vision</span>
             <p>{vision || <em className="adm-content__preview-empty">Empty</em>}</p>
+          </div>
+          <div className="adm-content__preview-block">
+            <span className="adm-content__preview-label">Partners</span>
+            <p>{partners.length ? partners.join(' · ') : <em className="adm-content__preview-empty">None added</em>}</p>
           </div>
         </div>
       </div>

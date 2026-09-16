@@ -2,13 +2,14 @@
   background: var(--black);
   color: rgba(255,255,255,0.75);
   font-size: 0.9rem;
+  border-top: 6px solid var(--green-mid);
 }
 
 .footer__top {
   display: grid;
   grid-template-columns: 1fr;
   gap: 2.5rem;
-  padding-top: 4rem;
+  padding-top: 3.5rem;
   padding-bottom: 3rem;
 }
 

@@ -9,17 +9,39 @@
 }
 
 .about__mv-card {
-  background: var(--white);
-  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  background: #eef8f0;
+  border: 1px solid #cfe8d4;
+  border-top: 4px solid var(--green-mid);
   border-radius: var(--radius);
   padding: 2.25rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  box-shadow: 0 10px 24px rgba(45, 106, 79, 0.08);
+}
+
+.about__mv-card:nth-child(2) {
+  background: #eef5fb;
+  border-color: #cddfec;
+  border-top-color: #4685a8;
+  box-shadow: 0 10px 24px rgba(50, 100, 130, 0.08);
 }
 
 .about__mv-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
   font-size: 2rem;
+  border-radius: 50%;
+  background: rgba(64, 145, 108, 0.14);
+}
+
+.about__mv-card:nth-child(2) .about__mv-icon {
+  background: rgba(70, 133, 168, 0.14);
 }
 
 .about__mv-card h3 {
@@ -27,6 +49,8 @@
   font-weight: 800;
   color: var(--green-dark);
 }
+
+.about__mv-card:nth-child(2) h3 { color: #285a75; }
 
 .about__mv-card p {
   font-size: 0.95rem;

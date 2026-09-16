@@ -13,7 +13,7 @@ import api from '../services/api'
 const DataContext = createContext(null)
 
 // ── Fallback defaults (shown while loading or if API unreachable) ─────────────
-const DEFAULT_CONTENT = { mission: '', vision: '' }
+const DEFAULT_CONTENT = { mission: '', vision: '', partners: [] }
 const DEFAULT_CONTACT = {
   address: '', phone: '', email: '', officeHours: '',
   socialLinks: { facebook: '', twitter: '', instagram: '', linkedin: '', youtube: '' },

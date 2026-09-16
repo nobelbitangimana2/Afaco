@@ -8,7 +8,7 @@ const NAV_ITEMS = [
   { to: '/admin/media',    label: 'Media',     icon: '🖼'            },
   { to: '/admin/updates',  label: 'Updates',   icon: '📰'            },
   { to: '/admin/products', label: 'Products',  icon: '🌾'            },
-  { to: '/admin/content',  label: 'Content',   icon: '✏️'            },
+  { to: '/admin/content',  label: 'Content & Partners', icon: '✏️'     },
   { to: '/admin/contact',  label: 'Contact',   icon: '📋'            },
 ]
 
