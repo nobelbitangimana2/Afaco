@@ -12,6 +12,25 @@ import api from '../services/api'
 
 const DataContext = createContext(null)
 
+function normalizePartner(partner) {
+  if (typeof partner === 'string') {
+    return { name: partner, description: '', imageUrl: '' }
+  }
+  return {
+    name: partner?.name || '',
+    description: partner?.description || '',
+    imageUrl: partner?.imageUrl || '',
+  }
+}
+
+function normalizeContent(value) {
+  return {
+    ...DEFAULT_CONTENT,
+    ...(value || {}),
+    partners: (value?.partners || []).map(normalizePartner).filter((partner) => partner.name),
+  }
+}
+
 // ── Fallback defaults (shown while loading or if API unreachable) ─────────────
 const DEFAULT_CONTENT = { mission: '', vision: '', partners: [] }
 const DEFAULT_CONTACT = {
@@ -40,7 +59,7 @@ export function DataProvider({ children }) {
       if (imgsRes.status  === 'fulfilled') setImages(imgsRes.value.data)
       if (updsRes.status  === 'fulfilled') setUpdates(updsRes.value.data)
       if (prodsRes.status === 'fulfilled') setProducts(prodsRes.value.data)
-      if (contRes.status  === 'fulfilled') setContent(contRes.value.data || DEFAULT_CONTENT)
+      if (contRes.status  === 'fulfilled') setContent(normalizeContent(contRes.value.data))
       if (ctctRes.status  === 'fulfilled') setContact(ctctRes.value.data || DEFAULT_CONTACT)
     } catch (err) {
       console.error('DataContext initial load error:', err)
@@ -116,8 +135,9 @@ export function DataProvider({ children }) {
 
   async function saveContent(patch) {
     const res = await api.put('/api/admin/content', patch)
-    setContent(res.data)
-    return res.data
+    const nextContent = normalizeContent(res.data)
+    setContent(nextContent)
+    return nextContent
   }
 
   // ── Contact actions ───────────────────────────────────────────────────────────
