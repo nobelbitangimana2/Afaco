@@ -16,7 +16,7 @@ const SLIDES = [
 const FEATURES = [
   {
     icon: '🌾',
-    color: '#d8f3dc',
+    color: '#8b5e3c',
     title: 'Rice Production',
     desc:  'We cultivate high-yield White and Parboiled Rice across North Kivu, using improved seed varieties and climate-smart techniques to maximise output every season.',
     link:  '/products',
@@ -24,7 +24,7 @@ const FEATURES = [
   },
   {
     icon: '👨‍🌾',
-    color: '#fef3c7',
+    color: '#a67c52',
     title: 'Farmer Training',
     desc:  'AFACO runs quarterly workshops on soil health, irrigation, crop rotation, and cooperative management — equipping farmers with tools to grow their businesses.',
     link:  '/activities',
@@ -32,7 +32,7 @@ const FEATURES = [
   },
   {
     icon: '📦',
-    color: '#e0f2fe',
+    color: '#7a4b2d',
     title: 'Packaging & Distribution',
     desc:  'From 1 kg household bags to 100 kg institutional sacks, our produce reaches local markets, traders, and institutions across the region.',
     link:  '/products',
