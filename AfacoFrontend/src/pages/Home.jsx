@@ -16,7 +16,8 @@ const SLIDES = [
 const FEATURES = [
   {
     icon: '🌾',
-    color: '#8b5e3c',
+    color: '#5d3a29',
+    panel: '#f1e3d7',
     title: 'Rice Production',
     desc:  'We cultivate high-yield White and Parboiled Rice across North Kivu, using improved seed varieties and climate-smart techniques to maximise output every season.',
     link:  '/products',
@@ -24,7 +25,8 @@ const FEATURES = [
   },
   {
     icon: '👨‍🌾',
-    color: '#a67c52',
+    color: '#6f4c39',
+    panel: '#f4e8dc',
     title: 'Farmer Training',
     desc:  'AFACO runs quarterly workshops on soil health, irrigation, crop rotation, and cooperative management — equipping farmers with tools to grow their businesses.',
     link:  '/activities',
@@ -32,7 +34,8 @@ const FEATURES = [
   },
   {
     icon: '📦',
-    color: '#7a4b2d',
+    color: '#7c4d31',
+    panel: '#ead8c4',
     title: 'Packaging & Distribution',
     desc:  'From 1 kg household bags to 100 kg institutional sacks, our produce reaches local markets, traders, and institutions across the region.',
     link:  '/products',
@@ -119,14 +122,14 @@ export default function Home() {
       <section className="features section--white" aria-label="What we do">
         <div className="container">
           <div className="features__grid">
-            {FEATURES.map(({ icon, color, title, desc, link, label }) => (
-              <div key={title} className="feat-card">
+            {FEATURES.map(({ icon, color, panel, title, desc, link, label }) => (
+              <div key={title} className="feat-card" style={{ background: panel }}>
                 <div className="feat-card__icon" style={{ background: color }}>
                   <span aria-hidden="true">{icon}</span>
                 </div>
                 <h3 className="feat-card__title">{title}</h3>
                 <p className="feat-card__desc">{desc}</p>
-                <Link to={link} className="feat-card__link">
+                <Link to={link} className="feat-card__link" style={{ color: color }}>
                   {label} →
                 </Link>
               </div>
